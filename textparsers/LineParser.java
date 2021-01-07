@@ -13,10 +13,8 @@ public class LineParser {
     public static final String EMPTY_LINE = "^$";
     public static final String OPEN_BLOCK = ".*\\{$";
     public static final String CLOSE_BLOCK = "^}$";
-    public static final String CONDITIONAL_EMPTY_REGEX = "^(if|while)\\((%s(\\s?(\\|\\||&&)+\\s?%s\\s?)*)\\)\\{$";
-    public static final String CLOSE_BLOCK = "";
+    public static final String CONDITIONAL_REGEX = "(if|while)\([a-zA-Z0-9_\s|&]*\){$"
 
-    public final String CONDITIONAL_REGEX = String.format(CONDITIONAL_EMPTY_REGEX,NAME_REGEX,NAME_REGEX);
     public final Pattern oneLineOperation = Pattern.compile(ONE_LINE_REGEX);
     public final Pattern commentOperation = Pattern.compile(COMMENT_REGEX);
     public final Pattern methodOperation = Pattern.compile(METHOD_REGEX);
