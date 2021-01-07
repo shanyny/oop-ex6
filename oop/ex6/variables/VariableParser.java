@@ -6,6 +6,9 @@ import oop.ex6.variables.exceptions.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * This class.
+ */
 public class VariableParser {
 
     private static final String FINAL = "final";
