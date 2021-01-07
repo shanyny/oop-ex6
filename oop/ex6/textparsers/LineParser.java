@@ -1,38 +1,48 @@
 package oop.ex6.textparsers;
 
 import oop.ex6.blocks.*;
+import oop.ex6.variables.Variable;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LineParser {
 
-    public static final String COMMENT_REGEX = "^//";
-    public static final String ONE_LINE_REGEX = ".*;$";
-    public static final String EMPTY_LINE = "^$";
-    public static final String OPEN_BLOCK = ".*\\{$";
-    public static final String CLOSE_BLOCK = "^}$";
-    public static final String CONDITIONAL_REGEX = "(if|while)\([a-zA-Z0-9_\s|&]*\){$"
+    private static final String COMMENT_REGEX = "^//";
+    private static final String ONE_LINE_REGEX = ".*;$";
+    private static final String EMPTY_LINE = "^$";
+    private static final String CLOSE_BLOCK = "^}$";
+    private static final String CONDITIONAL_REGEX = "(if|while)\\(.*\\)\\{$";
+    private static final String METHOD_REGEX = ".*\\(.*\\)\\{$";
 
-    public final Pattern oneLineOperation = Pattern.compile(ONE_LINE_REGEX);
-    public final Pattern commentOperation = Pattern.compile(COMMENT_REGEX);
-    public final Pattern methodOperation = Pattern.compile(METHOD_REGEX);
-    public final Pattern blockOpenerOperation = Pattern.compile(".*\\{$");
-    public final Pattern nameConvention = Pattern.compile(NAME_REGEX);
-    public final Pattern emptyLine = Pattern.compile(EMPTY_LINE);
-    public final Pattern conditionalOperation = Pattern.compile(CONDITIONAL_REGEX);
 
+    public final Pattern oneLinePattern = Pattern.compile(ONE_LINE_REGEX);
+    public final Pattern commentPattern = Pattern.compile(COMMENT_REGEX);
+    public final Pattern methodPattern = Pattern.compile(METHOD_REGEX);
+    public final Pattern emptyPattern = Pattern.compile(EMPTY_LINE);
+    public final Pattern conditionalPattern = Pattern.compile(CONDITIONAL_REGEX);
+    public final Pattern closeBlockPattern = Pattern.compile(CLOSE_BLOCK);
+
+    protected final HashMap<String, Variable> variables = new HashMap<>();
+    protected final HashMap<String, oop.ex6.blocks.MethodBlock> methods = new HashMap<>();
+    protected final LinkedList<oop.ex6.blocks.ConditionalBlock> conditionals = new LinkedList<>();
+    public final Iterable<String> strings;
+    public Iterator<String> currIterator;
+
+    public LineParser(Iterable<String> strings){
+        this.strings = strings;
+    }
 
     private MethodBlock createMethodBlock(String line) throws BlockException {
-        Matcher m = matchRegex(line,methodOperation);
-        String methodName = m.group(1);
-        String parameters = m.group(2);
+        Matcher m = matchRegex(line,methodPattern);
         Iterable<String> blockLines = getBlockLines();
-        methods.put(methodName,new MethodBlock(parameters,blockLines));
+        methods.put(methodName,new MethodBlock(line,blockLines));
     }
     private ConditionalBlock createConditionBlock(String line) throws BlockException {
-        Matcher m = matchRegex(line,conditionalOperation);
+        Matcher m = matchRegex(line,conditionalPattern);
         String condition = m.group(1);
         Iterable<String> blockLines = getBlockLines();
         return new ConditionalBlock(condition,blockLines);
@@ -52,7 +62,7 @@ public class LineParser {
 
     /**
      * This method is receiving a single line and deciding if its opening a method,
-     * a conditional block, a comment, if it's empty or if its a single line operation.
+     * a conditional block, a comment, if it's empty or if its a single line Pattern.
      * @param line String of the current line in file
      */
     private void classifyLine(String line) throws BlockException {
@@ -68,7 +78,7 @@ public class LineParser {
             createMethodBlock(line);
         }
         else if (isOneLine(line)){
-//                Matcher m = matchRegex(line,oneLineOperation);
+//                Matcher m = matchRegex(line,oneLinePattern);
             createOneLiner(line);
         }
         else if (isConditionalLine(line)){
@@ -81,22 +91,22 @@ public class LineParser {
     }
 
     private boolean isEmptyLine(String line){
-        return isMatchRegex(line,emptyLine);
+        return isMatchRegex(line,emptyPatten);
     }
 
     private boolean isMethodLine(String line){
-        return isMatchRegex(line,methodOperation);
+        return isMatchRegex(line,methodPattern);
     }
 
     private boolean isOneLine(String line){
-        return isMatchRegex(line,oneLineOperation);
+        return isMatchRegex(line,oneLinePattern);
     }
 
     private boolean isCommentLine(String line){
-        return isMatchRegex(line,commentOperation);
+        return isMatchRegex(line,commentPattern);
     }
     private boolean isConditionalLine(String line){
-        return isMatchRegex(line,conditionalOperation);
+        return isMatchRegex(line,conditionalPattern);
     }
 
     private boolean isMethodCall(String line){
@@ -106,7 +116,7 @@ public class LineParser {
 
 
     /**
-     * This method is encapsulating a small repeated operation of defining a matcher to the given pattern.
+     * This method is encapsulating a small repeated Pattern of defining a matcher to the given pattern.
      * performs matches and returns result.
      * @param line the string to match regex on
      * @param pattern the pattern to match by
@@ -124,7 +134,7 @@ public class LineParser {
     /**
      * This method is validating a block structure and returns it's content
      * @param currIterator line iterator to run on
-     * @return LinkedList of lines in the block
+     * @return LinkedList of oop.ex6.lines in the block
      * @throws BlockBracketsException
      */
     private LinkedList<String> getBlockLines() throws BlockException{
