@@ -27,6 +27,18 @@ public abstract class Block {
         return false;
     }
 
+    protected Block parent;
+
+    public Variable getVariable(String varName, boolean blockScope) {
+        Variable variable = variables.get(varName);
+        if (variable != null) return variable;
+        else if (!blockScope && parent != null) return parent.getVariable(varName, false);
+        else return null;
+    }
+
+    public void addVariable(Variable variable) {
+        variables.put(variable.getName(), variable);
+    }
 
 
 }
