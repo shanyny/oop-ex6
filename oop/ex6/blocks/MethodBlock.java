@@ -1,6 +1,6 @@
 package oop.ex6.blocks;
 
-class MethodBlock extends Block {
+public class MethodBlock extends Block {
 
     private static final String NAME_REGEX = "[a-zA-Z][a-zA-Z_0-9]*";
     public static final String PARAMETER_EMPTY_REGEX = "\\((\\s?(final)?\\s%s\\s%s(,\\s?(final)?\\s%s\\s%s)*)\\)";

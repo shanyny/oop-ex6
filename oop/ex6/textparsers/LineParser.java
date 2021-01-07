@@ -1,7 +1,9 @@
 package oop.ex6.textparsers;
 
 import oop.ex6.blocks.*;
+import oop.ex6.lines.Line;
 import oop.ex6.variables.Variable;
+import oop.ex6.variables.VariableParser;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,14 +11,17 @@ import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 public class LineParser {
 
     private static final String COMMENT_REGEX = "^//";
     private static final String ONE_LINE_REGEX = ".*;$";
     private static final String EMPTY_LINE = "^$";
     private static final String CLOSE_BLOCK = "^}$";
+    private static final String OPEN_BLOCK = ".*\\{$";
     private static final String CONDITIONAL_REGEX = "(if|while)\\(.*\\)\\{$";
-    private static final String METHOD_REGEX = ".*\\(.*\\)\\{$";
+    private static final String METHOD_REGEX = "(.*)\\(.*\\)\\{$";
+    private static final String METHOD_CALL_REGEX = "(.*)\\(.*\\)\\;$";
 
 
     public final Pattern oneLinePattern = Pattern.compile(ONE_LINE_REGEX);
@@ -32,15 +37,17 @@ public class LineParser {
     public final Iterable<String> strings;
     public Iterator<String> currIterator;
 
-    public LineParser(Iterable<String> strings){
+    public LineParser(Block block, Iterable<String> strings){
         this.strings = strings;
     }
 
     private MethodBlock createMethodBlock(String line) throws BlockException {
         Matcher m = matchRegex(line,methodPattern);
+        String methodName = m.group(1);
         Iterable<String> blockLines = getBlockLines();
         methods.put(methodName,new MethodBlock(line,blockLines));
     }
+
     private ConditionalBlock createConditionBlock(String line) throws BlockException {
         Matcher m = matchRegex(line,conditionalPattern);
         String condition = m.group(1);
@@ -48,7 +55,6 @@ public class LineParser {
         return new ConditionalBlock(condition,blockLines);
     }
     private MethodBlock createOneLiner() throws BlockException {
-        Iterable<String> blockLines = getBlockLines();
         return new MethodBlock(line,blockLines);
     }
 
@@ -67,52 +73,66 @@ public class LineParser {
      */
     private void classifyLine(String line) throws BlockException {
 
-//            Matcher m;
-        if (isEmptyLine(line)){
+        for (LineType lineType : LineType.values()) {
+            if (lineType.isMatching(line)) {
+                for (SubEnum subenum : lineType.getRelevantEnums(line);
+            }
+        }
+
+
+        if (LineType.EMPTYLINE.isMatching(line)){
             return;
         }
-        else if (isCommentLine(line)){
+        else if (LineType.COMMENTLINE.isMatching(line)){
             return;
         }
-        else if (isMethodLine(line)){
-            createMethodBlock(line);
+        else if (LineType.OPENBLOCKLINE.isMatching(line)){
+            if (LineType.METHODLINE.isMatching(line)){
+                createMethodBlock(line);
+            }
+            else if (LineType.CONDITIONLINE.isMatching(line)){
+                createConditionBlock(line);
+            }
+        else if (LineType.ONELINE.isMatching(line)){
+            if (LineType.METHODCALLLINE.isMatching(line)){
+                validateMethod(line);
+            }
+            else{
+                VariableParser.parseVariableLine(line);
+            }
         }
-        else if (isOneLine(line)){
-//                Matcher m = matchRegex(line,oneLinePattern);
-            createOneLiner(line);
-        }
-        else if (isConditionalLine(line)){
-            createConditionBlock(line);
-        }
+
         else{
             throw new LineUnknownFormatException();
         }
 
     }
 
-    private boolean isEmptyLine(String line){
-        return isMatchRegex(line,emptyPatten);
+    private void validateMethod(String line) {
     }
 
-    private boolean isMethodLine(String line){
-        return isMatchRegex(line,methodPattern);
-    }
-
-    private boolean isOneLine(String line){
-        return isMatchRegex(line,oneLinePattern);
-    }
-
-    private boolean isCommentLine(String line){
-        return isMatchRegex(line,commentPattern);
-    }
-    private boolean isConditionalLine(String line){
-        return isMatchRegex(line,conditionalPattern);
-    }
-
-    private boolean isMethodCall(String line){
-        Pattern methodCall = Pattern.compile(METHOD_CALL);
-        return isMatchRegex(line,methodCall);
-    }
+//    private boolean isEmptyLine(String line){
+//        return isMatchRegex(line,emptyPatten);
+//    }
+//
+//    private boolean isMethodLine(String line){
+//        return isMatchRegex(line,methodPattern);
+//    }
+//
+//    private boolean isOneLine(String line){
+//        return isMatchRegex(line,oneLinePattern);
+//    }
+//
+//    private boolean isCommentLine(String line){
+//        return isMatchRegex(line,commentPattern);
+//    }
+//    private boolean isConditionalLine(String line){
+//        return isMatchRegex(line,conditionalPattern);
+//    }
+//    private boolean isMethodCall(String line){
+//        Pattern methodCall = Pattern.compile(METHOD_CALL_REGEX);
+//        return isMatchRegex(line,methodCall);
+//    }
 
 
     /**
@@ -159,5 +179,9 @@ public class LineParser {
             throw new BlockBracketsException();
         }
         return blockStrings;
+    }
+
+    private void validateOneLiner(){
+
     }
 }

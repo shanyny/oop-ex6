@@ -1,47 +1,62 @@
-package oop.ex6.variables;
+package oop.ex6.textparsers;
 
+import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 import oop.ex6.variables.exceptions.TypeNotFoundException;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This enum represents the different types available.
- * @author Roy Urbach
+ * This enum represents the different types of lines available.
+ * @author Shany Gindi
  */
-
-
-
 
 enum LineType {
     COMMENT(Pattern.compile("^//")),
     EMPTY(Pattern.compile("^$")),
     CONDITION(Pattern.compile("(if|while)\\(.*\\)\\{$")),
     METHOD(Pattern.compile(".*\\(.*\\)\\{$")),
-    ONELINER(Pattern.compile(".*;$"));
+    ONELINER(Pattern.compile(".*;$")),
+    METHODCALL(Pattern.compile(".*\\(.*\\)\\;$")),
+    CLOSEBLOCK(Pattern.compile("^}$")),
+    OPENBLOCK(Pattern.compile("^.*\\{$"));
 
-    /* A string indicative of the type of the variable. */
-    private final String typeStr;
+
 
     /* A pattern indicative of the value available for the type. */
-    private final Pattern p;
+    private final Pattern pattern;
 
     /**
      * Constructor for the enum.
-     * @param typeStr - A string indicative of the type of the variable.
      * @param p - A pattern indicative of the value available for the type.
      */
     LineType(Pattern p) {
-        this.typeStr = typeStr;
-        this.p = p;
+        this.pattern = p;
+    }
+
+
+    boolean isMatching(String line){
+        return getMatcher(line).matches();
+    }
+
+
+    Matcher getMatcher(String line){
+        return pattern.matcher(line);
     }
 
     /**
-     * This method returns true if a string indicative of a variable's type belongs to the enum's type.
-     * @param str - A string indicative of the type of the variable.
-     * @return true if compatible, false if not.
+     * Adding all catched groups to a String array and returns the values.
+     * @param line
+     * @return
      */
-    boolean isType(String str){
-        return str.equals(typeStr);
+    String[] getGroups(String line){
+        Matcher matcher = getMatcher(line);
+        int num_of_groups = matcher.groupCount();
+        String[] groups = new String[num_of_groups];
+        for (int i = 0 ;i < num_of_groups;i++){
+            groups[i] = matcher.group(i);
+        }
+        return groups;
     }
 
     /**

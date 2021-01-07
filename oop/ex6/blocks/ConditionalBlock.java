@@ -3,7 +3,7 @@ package oop.ex6.blocks;
 /**
  * Ifs and Whiles
  */
-class ConditionalBlock extends Block {
+public class ConditionalBlock extends Block {
 
     private static final String NAME_REGEX = "[a-zA-Z][a-zA-Z_0-9]*";
     public static final String CONDITIONAL_EMPTY_REGEX = "^(if|while)\\((%s(\\s?(\\|\\||&&)+\\s?%s\\s?)*)\\)\\{$";

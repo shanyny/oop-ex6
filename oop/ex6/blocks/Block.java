@@ -23,6 +23,10 @@ public abstract class Block {
 
     public abstract void validate();
 
+    public boolean isGlobal(){
+        return false;
+    }
+
 
 
 }

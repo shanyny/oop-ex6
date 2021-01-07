@@ -11,4 +11,8 @@ public class MainBlock extends Block {
 
     }
 
+    @Override
+    public boolean isGlobal() {
+        return true;
+    }
 }
