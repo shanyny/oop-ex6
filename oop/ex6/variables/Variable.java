@@ -19,16 +19,13 @@ public class Variable {
     private boolean isInitialized = false;
 
     /* A boolean indicating if the variable is final or not. */
-    private boolean isFinal = false;
+    private final boolean isFinal;
 
     /* A boolean indicating if the variable is global or not. */
-    private boolean isGlobal = false;
+    private final boolean isGlobal;
 
     /* A VariableType (enum) type indicating what is the type of the variable. */
     private VariableType type;
-
-    /* A pattern for legal variable names. */
-    private final Pattern namePattern = Pattern.compile("[a-zA-Z|_][\\w]*"); // fix
 
     /**
      * Constructor for a variable, indicating whether it is final and global.
@@ -41,8 +38,8 @@ public class Variable {
      * @throws NullPointerException - if the variable name is empty or null.
      */
     public Variable(String name, VariableType type, String value,
-                    boolean isFinal, boolean isGlobal) throws TypeNotFoundException,
-            IllegalVariableName, NewValueNotCompatible, VariableIsFinal, FinalVariableNotInitialized {
+                    boolean isFinal, boolean isGlobal) throws TypeNotFoundException, NewValueNotCompatible,
+            VariableIsFinal, FinalVariableNotInitialized {
         setVariable(name, type);
         this.isGlobal = isGlobal;
         setValue(value);
@@ -62,7 +59,7 @@ public class Variable {
      */
     public Variable(String name, VariableType type, Variable value,
                     boolean isFinal, boolean isGlobal)
-            throws TypeNotFoundException, IllegalVariableName, NewValueNotCompatible,
+            throws TypeNotFoundException, NewValueNotCompatible,
             VariableIsFinal, VariableNotInitialized, FinalVariableNotInitialized {
         setVariable(name, type);
         this.isGlobal = isGlobal;
@@ -76,10 +73,8 @@ public class Variable {
      * @param name - the name of the variable.
      * @param type - a string representation of the variable's type.
      * @throws TypeNotFoundException - if SJava doesn't support this type.
-     * @throws IllegalVariableName - if the variable name is empty, null or just illegal.
      */
-    private void setVariable(String name, VariableType type) throws IllegalVariableName, TypeNotFoundException {
-        if (name == null || !namePattern.matcher(name).matches()) throw new IllegalVariableName();
+    private void setVariable(String name, VariableType type) throws TypeNotFoundException {
         this.name = name;
         if (type == null) throw new TypeNotFoundException();
         this.type = type;
@@ -158,25 +153,34 @@ public class Variable {
         return isInitialized;
     }
 
-//    public static void oop.ex6.main(String[] args) {
+//    public static void main(String[] args) {
 //        String[] goodVariablenames = new String[]{"g2", "b_3", "__", "_a", "____b", "_0", "a_"};
 //        String[] badVariablenames = new String[]{"2g", "_", "2__", "54_a", "3_3_3__b"};
 //        Variable variable;
-//
-//
+//        System.out.println("GOOD");
+//        for (String good : goodVariablenames) {
+//            System.out.println(NAME_PATTERN.matcher(good).matches());
+//        }
+//        System.out.println("BAD");
+//        for (String bad : badVariablenames) {
+//            System.out.println(NAME_PATTERN.matcher(bad).matches());
+//        }
+
+
 //        try {
-//            Variable stringVariable = new Variable("stringVar", "String", "\"bloop\"", false, false);
-//            Variable intVariable = new Variable("intVar", "int");
+//            Variable stringVariable = new Variable("stringVar", VariableType.STRING, "\"bloop\"", false, false);
+//            Variable intVariable = new Variable("intVar", VariableType.INT, "3", );
 //            Variable doubleVariable = new Variable("doubleVar", "double");
 //            Variable booleanVariable = new Variable("booleanVar", "boolean");
 //            Variable charVariable = new Variable("var", "char");
 //
+//            String str = null;
 //
 //            System.out.println("Good Variable Names");
 //            for (String name : goodVariablenames) {
 //                System.out.println(name);
 //                try {
-//                    variable = new Variable(name, "String");
+//                    variable = new Variable(name, VariableType.STRING, str, false, false);
 //                } catch (IllegalVariableName | TypeNotFoundException e) {
 //                    System.out.println(e);
 //                }
