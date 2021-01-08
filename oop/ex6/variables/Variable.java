@@ -2,8 +2,6 @@ package oop.ex6.variables;
 
 import oop.ex6.variables.exceptions.*;
 
-import java.util.regex.Pattern;
-
 /**
  * This class represents a SJava variable, which can be final, global, uninitialized, and holds a value
  * and the name of the variable.
@@ -27,19 +25,29 @@ public class Variable {
     /* A VariableType (enum) type indicating what is the type of the variable. */
     private VariableType type;
 
+
+    /**
+     * Simple constructor for a variable, indicating its name and type.
+     * @param name - the name of the variable.
+     * @param type - the variable's type.
+     */
+    public Variable(String name, VariableType type)  {
+        setVariable(name, type);
+        this.isGlobal = false;
+        this.isFinal = false;
+    }
+
     /**
      * Constructor for a variable, indicating whether it is final and global.
      * @param name - the name of the variable.
-     * @param type - a string representation of the variable's type.
+     * @param type - the variable's type.
      * @param value - value to initialize the variable with.
      * @param isFinal - is the variable final.
      * @param isGlobal - is the variable global.
-     * @throws TypeNotFoundException - if SJava doesn't support this type.
-     * @throws NullPointerException - if the variable name is empty or null.
      */
     public Variable(String name, VariableType type, String value,
-                    boolean isFinal, boolean isGlobal) throws TypeNotFoundException, NewValueNotCompatible,
-            VariableIsFinal, FinalVariableNotInitialized {
+                    boolean isFinal, boolean isGlobal)
+            throws NewValueNotCompatible, VariableIsFinal, FinalVariableNotInitialized {
         setVariable(name, type);
         this.isGlobal = isGlobal;
         setValue(value);
@@ -50,17 +58,16 @@ public class Variable {
     /**
      * Constructor for a variable, indicating whether it is final and global.
      * @param name - the name of the variable.
-     * @param type - a string representation of the variable's type.
+     * @param type - the variable's type.
      * @param value - variable to initialize the variable with.
      * @param isFinal - is the variable final.
      * @param isGlobal - is the variable global.
-     * @throws TypeNotFoundException - if SJava doesn't support this type.
-     * @throws NullPointerException - if the variable name is empty or null.
      */
     public Variable(String name, VariableType type, Variable value,
                     boolean isFinal, boolean isGlobal)
-            throws TypeNotFoundException, NewValueNotCompatible,
-            VariableIsFinal, VariableNotInitialized, FinalVariableNotInitialized {
+            throws NewValueNotCompatible, VariableIsFinal, VariableNotInitialized,
+            FinalVariableNotInitialized {
+
         setVariable(name, type);
         this.isGlobal = isGlobal;
         setValue(value);
@@ -72,11 +79,9 @@ public class Variable {
      * This method sets the variable and acts as a shared setting up method for the constructors.
      * @param name - the name of the variable.
      * @param type - a string representation of the variable's type.
-     * @throws TypeNotFoundException - if SJava doesn't support this type.
      */
-    private void setVariable(String name, VariableType type) throws TypeNotFoundException {
+    private void setVariable(String name, VariableType type) {
         this.name = name;
-        if (type == null) throw new TypeNotFoundException();
         this.type = type;
     }
 
@@ -94,7 +99,7 @@ public class Variable {
         if (variable != null) {
             if (isFinal) throw new VariableIsFinal();
             else if (!variable.isInitialized()) throw new VariableNotInitialized();
-            else if (type.canSetTo(variable)) initialize();
+            else if (getType().canSetTo(variable)) initialize();
             else throw new NewValueNotCompatible();
         }
     }
@@ -109,8 +114,8 @@ public class Variable {
      */
     public void setValue(String newValue) throws NewValueNotCompatible, VariableIsFinal {
         if (newValue != null) {
-            if (isFinal) throw new VariableIsFinal();
-            else if (type.canSetTo(newValue)) initialize();
+            if (!isFinal) throw new VariableIsFinal();
+            else if (getType().canSetTo(newValue)) initialize();
             else throw new NewValueNotCompatible();
         }
     }
@@ -119,7 +124,7 @@ public class Variable {
      * This method is called after changing the value of the variable.
      * If the variable is marked as not initialized, it is changing it to initialized.
      */
-    private void initialize(){
+    protected void initialize(){
         if (!isInitialized) isInitialized = true;
     }
 

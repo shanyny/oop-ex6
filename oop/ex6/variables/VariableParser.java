@@ -95,7 +95,6 @@ public abstract class VariableParser {
      * This method assigns a new value to a variable.
      * @param block - the block to add the variables to.
      * @param matcher - the matcher that holds the variable's strings.
-     * @throws TypeNotFoundException - if the given type is not valid.
      * @throws NewValueNotCompatible - if the value given to a variable is not compatible with its type.
      * @throws VariableIsFinal - if trying to assign a value to a final variable.
      * @throws VariableNotInitialized - if trying to assign a not-initialized variable to a variable.
@@ -104,7 +103,7 @@ public abstract class VariableParser {
      */
     private static void assignVariable(Block block, Matcher matcher)
             throws VariableDoesntExist, VariableIsFinal, NewValueNotCompatible, VariableNotInitialized,
-            TypeNotFoundException, FinalVariableNotInitialized {
+            FinalVariableNotInitialized {
         String varName = matcher.group(1);
 
         Variable var = block.getVariable(varName, false);
@@ -133,14 +132,13 @@ public abstract class VariableParser {
      * @param isGlobal - if the variable global.
      * @throws NewValueNotCompatible - if the value given to a variable is not compatible with its type.
      * @throws VariableIsFinal - if trying to assign a value to a final variable.
-     * @throws TypeNotFoundException - if the given type is not valid.
      * @throws FinalVariableNotInitialized - if trying to declare a final variable without initializing it.
      * @throws VariableNotInitialized - if trying to assign a not-initialized variable to a variable.
      */
     private static void createVariable(Block block, String name, VariableType type, String value,
                                        boolean isFinal, boolean isGlobal)
             throws NewValueNotCompatible, VariableIsFinal,
-            TypeNotFoundException, FinalVariableNotInitialized, VariableNotInitialized {
+            FinalVariableNotInitialized, VariableNotInitialized {
 
         if (value != null) {
             Variable valueVar = block.getVariable(value, false);
