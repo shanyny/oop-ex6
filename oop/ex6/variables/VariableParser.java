@@ -14,14 +14,14 @@ public abstract class VariableParser {
 
     private static final String FINAL = "final";
     private static final String VALUE_FORMAT = "[\\w\"'\\-\\. ]+";
-    private static final String NAME_FORMAT = "(?:[a-zA-Z]|(?:_\\w))\\w*";
+
     private static final String SINGLE_VARIABLE_REGEX =
-            String.format("(%s) *(?:= *(%s))?",NAME_FORMAT, VALUE_FORMAT);
+            String.format("(%s) *(?:= *(%s))?",Variable.getRegex(), VALUE_FORMAT);
     private static final String FORMAT =
-            String.format("^(%s +)?([a-zA-Z]+) +((?:%s, *)*(?:%s)) *;$",
-                    FINAL, SINGLE_VARIABLE_REGEX, SINGLE_VARIABLE_REGEX);
+            String.format("^(%s +)?(%s) +((?:%s, *)*(?:%s)) *;$",
+                    FINAL, VariableType.getRegex(), SINGLE_VARIABLE_REGEX, SINGLE_VARIABLE_REGEX);
     private static final String SET_VARIABLE_REGEX =
-            String.format("^ *(%s) *= *(%s) *;$",  NAME_FORMAT, VALUE_FORMAT);
+            String.format("^ *(%s) *= *(%s) *;$",  Variable.getRegex(), VALUE_FORMAT);
 
     private static final Pattern SINGLE_VARIABLE_PATTERN = Pattern.compile(SINGLE_VARIABLE_REGEX);
     private static final Pattern FULL_PATTERN = Pattern.compile(FORMAT);

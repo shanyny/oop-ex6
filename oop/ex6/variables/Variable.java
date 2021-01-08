@@ -10,6 +10,9 @@ import oop.ex6.variables.exceptions.*;
  */
 public class Variable {
 
+    /* A Regex format of variable names. */
+    private static final String NAME_FORMAT = "(?:[a-zA-Z]|(?:_\\w))\\w*";
+
     /* The name of the variable. */
     private String name;
 
@@ -158,7 +161,15 @@ public class Variable {
         return isInitialized;
     }
 
-//    public static void main(String[] args) {
+    /**
+     * This method returns a Regex representation of variables.
+     * @return a Regex representation of variables.
+     */
+    public static String getRegex() {
+        return NAME_FORMAT;
+    }
+
+    //    public static void main(String[] args) {
 //        String[] goodVariablenames = new String[]{"g2", "b_3", "__", "_a", "____b", "_0", "a_"};
 //        String[] badVariablenames = new String[]{"2g", "_", "2__", "54_a", "3_3_3__b"};
 //        Variable variable;

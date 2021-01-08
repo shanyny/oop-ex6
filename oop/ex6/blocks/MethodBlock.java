@@ -22,11 +22,23 @@ public class MethodBlock extends Block {
     public void validate() {
 
     }
+
+    /**
+     * This method adds a parameter to the parameters linked list.
+     */
     public void addParameter(Variable parameter) {
         if (getVariable(parameter.getName(), true) != null) throw new Exception();
         else {
             parameters.add(parameter);
             addVariable(parameter);
         }
+    }
+
+    /**
+     * This method returns the valueless parameters of the method as a linked list.
+     * @return the parameters of the method.
+     */
+    public LinkedList<Variable> getParameters() {
+        return parameters;
     }
 }

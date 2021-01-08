@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 public abstract class Block {
 
     protected final HashMap<String, Variable> variables = new HashMap<>();
-    protected final HashMap<String, oop.ex6.blocks.MethodBlock> methods = new HashMap<>();
+    protected final HashMap<String, MethodBlock> methods = new HashMap<>();
     protected final LinkedList<oop.ex6.blocks.ConditionalBlock> conditionals = new LinkedList<>();
     public final Iterable<String> strings;
     public Iterator<String> currIterator;
@@ -29,16 +29,38 @@ public abstract class Block {
 
     protected Block parent;
 
+    /**
+     * This method returns a Variable with the same name as the argument given.
+     * It can search in this Block's scope, or also its ancestors' scopes.
+     * @param varName - the name of the Variable wanted.
+     * @param blockScope - true if the search is only in this block's scope, false if the search includes
+     *                   ancestors' scopes.
+     * @return a MethodBlock in the block's ancestors scope with the same name as the argument given.
+     */
     public Variable getVariable(String varName, boolean blockScope) {
         Variable variable = variables.get(varName);
         if (variable != null) return variable;
-        else if (!blockScope && parent != null) return parent.getVariable(varName, false);
+        else if (!blockScope && !isGlobal()) return parent.getVariable(varName, false);
         else return null;
     }
 
+    /**
+     * This method adds a Variable to the block's scope.
+     * @param variable - the Variable to add.
+     */
     public void addVariable(Variable variable) {
         variables.put(variable.getName(), variable);
     }
 
-
+    /**
+     * This method returns a MethodBlock with the same name as the argument given.
+     * @param methodName - the name of the MethodBlock wanted.
+     * @return a MethodBlock in the block's ancestors scope with the same name as the argument given.
+     */
+    public MethodBlock getMethod(String methodName) {
+        MethodBlock method = methods.get(methodName);
+        if (method != null) return method;
+        else if (!isGlobal()) return parent.getMethod(methodName);
+        else return null;
+    }
 }

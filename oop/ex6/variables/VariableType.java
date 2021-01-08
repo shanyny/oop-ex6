@@ -15,6 +15,9 @@ enum VariableType {
     BOOLEAN("boolean", Pattern.compile("true|false|-?\\d+\\.?\\d*")),
     CHAR("char", Pattern.compile("'.'"));
 
+    /* A Regex format for types. */
+    public static final String TYPE_FORMAT = "[a-zA-Z]+";
+
     /* A string indicative of the type of the variable. */
     private final String typeStr;
 
@@ -76,5 +79,14 @@ enum VariableType {
     boolean canSetTo(String str) {
         if (str == null) return true;
         else return this.p.matcher(str).matches();
+    }
+
+    /**
+     * This method returns a Regex representation of types.
+     * Be warned: doesn't mean all strings that match are actual types!
+     * @return a Regex representation of types.
+     */
+    public static String getRegex() {
+        return TYPE_FORMAT;
     }
 }

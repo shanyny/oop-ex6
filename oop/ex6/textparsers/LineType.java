@@ -17,7 +17,7 @@ enum LineType {
     CONDITION(Pattern.compile("(if|while)\\(.*\\)\\{$")),
     METHOD(Pattern.compile(".*\\(.*\\)\\{$")),
     ONELINER(Pattern.compile(".*;$")),
-    METHODCALL(Pattern.compile(".*\\(.*\\)\\;$")),
+    METHODCALL(Pattern.compile(".*\\(.*\\);$")),
     CLOSEBLOCK(Pattern.compile("^}$")),
     OPENBLOCK(Pattern.compile("^.*\\{$"));
 
