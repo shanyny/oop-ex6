@@ -19,6 +19,11 @@ public class MethodBlock extends Block {
         this.name = name;
     }
 
+    @Override
+    public void validate() {
+
+    }
+
     /**
      * This method returns the method's name.
      * @return the method's name.
@@ -27,10 +32,6 @@ public class MethodBlock extends Block {
         return name;
     }
 
-    @Override
-    public void validate() {
-
-    }
 
     /**
      * This method adds a parameter to the parameters linked list.

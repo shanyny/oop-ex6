@@ -6,6 +6,6 @@ import oop.ex6.main.IllegalSJavaCode;
  * This exception is abstract and represents all method calls exceptions.
  * @author Shany Gindi and Roy Urbach
  */
-public abstract class MethodCallException extends OneLinerException {
+public abstract class MethodCreationException extends OneLinerException {
     private static final long serialVersionUID = 1L;
 }

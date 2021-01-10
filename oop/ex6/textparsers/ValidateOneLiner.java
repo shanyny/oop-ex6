@@ -20,6 +20,7 @@ public abstract class ValidateOneLiner {
 
     private final static String METHOD_CALL_FORMAT = "^(\\w+)\\((.*)\\);$";
     private final static Pattern METHOD_CALL_PATTERN = Pattern.compile(METHOD_CALL_FORMAT);
+    private final static Pattern METHOD_RETURN_PATTERN = Pattern.compile("^\\s*return\\s*;\\s*$");
 
     private static final String SEPARATOR = " *, *";
 
@@ -33,13 +34,18 @@ public abstract class ValidateOneLiner {
      * @throws MethodCallException - problem with calling a method.
      * @throws VariableException - problem with initializing or assigning variables.
      */
-    public static void validate(Block scope, String line) throws MethodCallException, VariableException {
+    public static void validate(Block scope, String line) throws MethodCallException, VariableException, ReturnOutsideMethodBlockException {
         Matcher methodCallMatcher = METHOD_CALL_PATTERN.matcher(line);
+        Matcher methodReturnMatcher = METHOD_RETURN_PATTERN.matcher(line);
+
         if (methodCallMatcher.find()) {
             MethodBlock methodBlock = scope.getMethod(methodCallMatcher.group(1));
             if (methodBlock == null) throw new CalledUnknownMethod();
             else checkCallMethod(scope, methodBlock, methodCallMatcher.group(2));
-        } else VariableParser.parseVariableLine(scope, line);
+        } else if (methodReturnMatcher.matches() && (scope.isGlobal())){
+            throw new ReturnOutsideMethodBlockException();
+        }else VariableParser.parseVariableLine(scope, line);
+
     }
 
     /**

@@ -1,6 +1,8 @@
 package oop.ex6.blocks;
 
-public class BlockException extends Exception{
+import oop.ex6.main.IllegalSJavaCode;
+
+public class BlockException extends IllegalSJavaCode {
 
     public BlockException(){
 

@@ -1,5 +1,8 @@
 package oop.ex6.blocks;
+import oop.ex6.textparsers.LineParser;
+import oop.ex6.textparsers.exceptions.OneLinerException;
 import oop.ex6.variables.*;
+import oop.ex6.variables.exceptions.VariableException;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -10,21 +13,25 @@ import java.util.regex.Pattern;
 public abstract class Block {
 
     private final HashMap<String, Variable> variables = new HashMap<>();
-    private final HashMap<String, MethodBlock> methods = new HashMap<>();
-    private final LinkedList<oop.ex6.blocks.ConditionalBlock> conditionals = new LinkedList<>();
+    private final HashMap<String, Block> subBlocks = new HashMap<>();
+//    private final LinkedList<oop.ex6.blocks.ConditionalBlock> conditionals = new LinkedList<>();
+    private final LineParser lineParser;
     public final Iterable<String> strings;
-    public Iterator<String> currIterator;
     private final Block parent;
 
 
 
 
-    public Block(Block parent, Iterable<String> strings) {
+    public Block(Block parent, Iterable<String> strings) throws BlockException, VariableException, OneLinerException {
         this.parent = parent;
         this.strings = strings;
+        lineParser = new LineParser(this,strings);
+        lineParser.parse();
     }
 
-    public abstract void validate();
+    protected void validate() throws ConditionParameterNotBoolean{
+//        for (Block block: )
+    }
 
     public boolean isGlobal(){
         return false;
