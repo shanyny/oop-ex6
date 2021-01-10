@@ -12,7 +12,7 @@ public class ConditionalBlock extends Block {
     private static final String NAME_REGEX = "[a-zA-Z][a-zA-Z_0-9]*";
     public static final String CONDITIONAL_EMPTY_REGEX = "^(if|while)\\((%s(\\s?(\\|\\||&&)+\\s?%s\\s?)*)\\){$";
     public final String CONDITIONAL_REGEX = String.format(CONDITIONAL_EMPTY_REGEX,NAME_REGEX,NAME_REGEX);
-    private final String SEPARATOR = " *\\|{2}|$$ *";
+    private final String SEPARATOR = " *\\|{2}|&& *";
     private final String condition;
 
 
