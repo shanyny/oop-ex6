@@ -12,10 +12,19 @@ public class MethodBlock extends Block {
     public static final String METHOD_EMPTY_REGEX = "^void\\s(%s)\\s\\((%s)\\)\\s?{$";
     public static final String METHOD_REGEX = String.format(METHOD_EMPTY_REGEX,NAME_REGEX,PARAMETERS_REGEX);
     private final LinkedList<Variable> parameters = new LinkedList<Variable>();
+    private final String name;
 
+    public MethodBlock(Block parent, Iterable<String> strings, String name, String declaration) {
+        super(parent, strings);
+        this.name = name;
+    }
 
-    public MethodBlock(String declaration, Iterable<String> strings) {
-        super(strings);
+    /**
+     * This method returns the method's name.
+     * @return the method's name.
+     */
+    public String getName() {
+        return name;
     }
 
     @Override

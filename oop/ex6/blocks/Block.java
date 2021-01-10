@@ -9,15 +9,18 @@ import java.util.regex.Pattern;
 
 public abstract class Block {
 
-    protected final HashMap<String, Variable> variables = new HashMap<>();
-    protected final HashMap<String, MethodBlock> methods = new HashMap<>();
-    protected final LinkedList<oop.ex6.blocks.ConditionalBlock> conditionals = new LinkedList<>();
+    private final HashMap<String, Variable> variables = new HashMap<>();
+    private final HashMap<String, MethodBlock> methods = new HashMap<>();
+    private final LinkedList<oop.ex6.blocks.ConditionalBlock> conditionals = new LinkedList<>();
     public final Iterable<String> strings;
     public Iterator<String> currIterator;
+    private final Block parent;
 
 
 
-    public Block(Iterable<String> strings) {
+
+    public Block(Block parent, Iterable<String> strings) {
+        this.parent = parent;
         this.strings = strings;
     }
 
@@ -26,8 +29,6 @@ public abstract class Block {
     public boolean isGlobal(){
         return false;
     }
-
-    protected Block parent;
 
     /**
      * This method returns a Variable with the same name as the argument given.
@@ -62,5 +63,13 @@ public abstract class Block {
         if (method != null) return method;
         else if (!isGlobal()) return parent.getMethod(methodName);
         else return null;
+    }
+
+    /**
+     * This method adds a MethodBlock to the block's scope.
+     * @param methodBlock - the MethodBlock to add.
+     */
+    public void addMethod(MethodBlock methodBlock) {
+        methods.put(methodBlock.getName(), methodBlock);
     }
 }

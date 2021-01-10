@@ -2,8 +2,13 @@ package oop.ex6.textparsers;
 
 import oop.ex6.blocks.*;
 import oop.ex6.lines.Line;
+import oop.ex6.textparsers.exceptions.MethodCallException;
+import oop.ex6.variables.MethodParameterParser;
 import oop.ex6.variables.Variable;
 import oop.ex6.variables.VariableParser;
+import oop.ex6.variables.exceptions.IllegalMethodParameters;
+import oop.ex6.variables.exceptions.TypeNotFoundException;
+import oop.ex6.variables.exceptions.VariableException;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -41,21 +46,25 @@ public class LineParser {
         this.strings = strings;
     }
 
-    private MethodBlock createMethodBlock(String line) throws BlockException {
+    private void createMethodBlock(Block block, String line) throws BlockException, IllegalMethodParameters, TypeNotFoundException {
         Matcher m = matchRegex(line,methodPattern);
         String methodName = m.group(1);
+        String methodParameters = m.group(2);
         Iterable<String> blockLines = getBlockLines();
-        methods.put(methodName,new MethodBlock(line,blockLines));
+        if (block.getMethod(methodName) != null) {throw new MethodAlreadyExists();}
+        MethodBlock methodBlock = new MethodBlock(block, blockLines, methodName, line);
+        MethodParameterParser.createMethodParameters(methodBlock, methodParameters);
     }
 
-    private ConditionalBlock createConditionBlock(String line) throws BlockException {
+    private void createConditionBlock(Block block, String line) throws BlockException {
         Matcher m = matchRegex(line,conditionalPattern);
         String condition = m.group(1);
         Iterable<String> blockLines = getBlockLines();
-        return new ConditionalBlock(condition,blockLines);
+        new ConditionalBlock(block, blockLines, condition);
     }
-    private MethodBlock createOneLiner() throws BlockException {
-        return new MethodBlock(line,blockLines);
+
+    private void createOneLiner(Block block, String line) throws BlockException, MethodCallException, VariableException {
+        ValidateOneLiner.validate(block, line);
     }
 
     private void iterateOnAllLines(Iterable<String> strings) throws BlockException{
@@ -71,7 +80,7 @@ public class LineParser {
      * a conditional block, a comment, if it's empty or if its a single line Pattern.
      * @param line String of the current line in file
      */
-    private void classifyLine(String line) throws BlockException {
+    private void classifyLine(Block block, String line) throws BlockException {
 
         for (LineType lineType : LineType.values()) {
             if (lineType.isMatching(line)) {
@@ -88,17 +97,17 @@ public class LineParser {
         }
         else if (LineType.OPENBLOCKLINE.isMatching(line)){
             if (LineType.METHODLINE.isMatching(line)){
-                createMethodBlock(line);
+                createMethodBlock(block, line);
             }
             else if (LineType.CONDITIONLINE.isMatching(line)){
-                createConditionBlock(line);
+                createConditionBlock(block, line);
             }
         else if (LineType.ONELINE.isMatching(line)){
             if (LineType.METHODCALLLINE.isMatching(line)){
-                validateMethod(line);
+                validateMethod(block, line);
             }
             else{
-                VariableParser.parseVariableLine(line);
+                VariableParser.parseVariableLine(block, line);
             }
         }
 

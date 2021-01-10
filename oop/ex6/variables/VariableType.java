@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
  * This enum represents the different types available.
  * @author Roy Urbach
  */
-enum VariableType {
+public enum VariableType {
     STRING("String", Pattern.compile("^\"([^\"]*)\"$")),
     INT("int", Pattern.compile("-?\\d+")),
     DOUBLE("double", Pattern.compile("-?\\d+\\.?\\d*")),
