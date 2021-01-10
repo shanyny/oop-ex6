@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 /**
  * This enum represents the different types available.
- * @author Roy Urbach
+ * @author Shany Gindi and Roy Urbach
  */
 public enum VariableType {
     STRING("String", Pattern.compile("^\"([^\"]*)\"$")),

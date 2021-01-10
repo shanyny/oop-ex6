@@ -1,8 +1,10 @@
 package oop.ex6.variables;
 
 import oop.ex6.blocks.*;
+import oop.ex6.main.IllegalSJavaCode;
 import oop.ex6.variables.exceptions.*;
 
+import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +33,7 @@ public abstract class VariableParser {
             String.format("^(%s) +(%s)$", VariableType.getRegex(), Variable.getRegex());
     private static final Pattern METHOD_PARAMETERS_PATTERN = Pattern.compile(METHOD_PARAMETERS_REGEX);
 
-    private static final String METHOD_PARAMETERS_SEPARATOR = " *, *";
+    private static final String SEPARATOR = " *, *";
 
     /**
      * This method receives a Block and a line (string), and updates the block's variable archives,
@@ -83,8 +85,9 @@ public abstract class VariableParser {
         VariableType variableType = VariableType.getType(matcher.group(2));  // the variables' type.
 
         String variablesString = matcher.group(3);
-        Matcher singleVariableMatcher = SINGLE_VARIABLE_PATTERN.matcher(variablesString);
-        while (singleVariableMatcher.find()) {  // initialize all variables in the line
+        for (String singleVariable : variablesString.split(SEPARATOR, -1)) {  // initialize all variables in the line
+            Matcher singleVariableMatcher = SINGLE_VARIABLE_PATTERN.matcher(singleVariable);
+            singleVariableMatcher.find();
             String varName = singleVariableMatcher.group(1);  // the name of the variable
 
             // if the variable already exists in scope and is not global
@@ -92,7 +95,6 @@ public abstract class VariableParser {
             if (variable != null && !variable.isGlobal()) throw new VariableAlreadyExistsInScope();
 
             String valueStr = singleVariableMatcher.group(2);  // the value of the variable to assign
-
             createVariable(block, varName, variableType, valueStr, isFinal, false);
         }
     }
@@ -168,7 +170,7 @@ public abstract class VariableParser {
     public static void createMethodParameters(MethodBlock methodBlock, String line)
             throws IllegalMethodParameters, TypeNotFoundException, ParameterNameAlreadyExistsException {
 
-        for (String str : line.split(METHOD_PARAMETERS_SEPARATOR)) {
+        for (String str : line.split(SEPARATOR)) {
             Matcher matcher = METHOD_PARAMETERS_PATTERN.matcher(str);
             if (!matcher.find()) throw new IllegalMethodParameters();
             String variableName = matcher.group(1);

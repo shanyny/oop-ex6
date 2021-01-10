@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  */
 
 enum LineType {
-    COMMENT(Pattern.compile("^//")),
+    COMMENT(Pattern.compile("^/{2}.*")),
     EMPTY(Pattern.compile("^\\s*$")),
     CONDITION(Pattern.compile("^(?:if|while)\\((.*)\\)\\{\\s*$")){
         @Override
@@ -44,7 +44,7 @@ enum LineType {
             VariableParser.createMethodParameters(methodBlock, methodParameters);  // add parameters to method
         }
     },
-    ONELINER(Pattern.compile(".*;\\s*$")){
+    ONELINER(Pattern.compile("^[^/].*;\\s*$")){
         @Override
         void parseLine(Block block, Iterator<String> strings,String line) throws OneLinerException, VariableException {
             OneLineValidator.validateOneLiner(block,line);
@@ -120,4 +120,5 @@ enum LineType {
         }
         return blockStrings;
     }
+
 }
