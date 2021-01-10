@@ -6,4 +6,11 @@ package oop.ex6.variables.exceptions;
  */
 public class VariableAlreadyExistsInScope extends VariableException {
     private static final long serialVersionUID = 1L;
+    private static final String MESSAGE = "Tried to declare for the second time a variable that already" +
+            " exists in scope.";
+
+    @Override
+    public String getMessage() {
+        return MESSAGE;
+    }
 }

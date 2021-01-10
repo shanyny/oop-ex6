@@ -7,4 +7,10 @@ package oop.ex6.variables.exceptions;
  */
 public class TypeNotFoundException extends VariableException {
     private static final long serialVersionUID = 1L;
+    private static final String MESSAGE = "Type given isn't supported in SJava.";
+
+    @Override
+    public String getMessage() {
+        return MESSAGE;
+    }
 }

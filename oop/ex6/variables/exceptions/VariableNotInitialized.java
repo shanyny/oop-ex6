@@ -8,4 +8,10 @@ package oop.ex6.variables.exceptions;
  */
 public class VariableNotInitialized extends VariableException {
     private static final long serialVersionUID = 1L;
+    private static final String MESSAGE = "Tried to assign an un-initialized variable to a variable.";
+
+    @Override
+    public String getMessage() {
+        return MESSAGE;
+    }
 }

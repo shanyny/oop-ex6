@@ -6,4 +6,10 @@ package oop.ex6.variables.exceptions;
  */
 public class InvalidVariableInitialization extends VariableException {
     private static final long serialVersionUID = 1L;
+    private static final String MESSAGE = "Illegal variable assignment or initialization line.";
+
+    @Override
+    public String getMessage() {
+        return MESSAGE;
+    }
 }

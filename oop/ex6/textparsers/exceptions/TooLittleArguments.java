@@ -6,4 +6,10 @@ package oop.ex6.textparsers.exceptions;
  */
 public class TooLittleArguments extends MethodCallException {
     private static final long serialVersionUID = 1L;
+    private static final String MESSAGE = "Tried to call a method with less arguments than its parameters.";
+
+    @Override
+    public String getMessage() {
+        return MESSAGE;
+    }
 }

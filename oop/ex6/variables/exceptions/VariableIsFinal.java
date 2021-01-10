@@ -7,4 +7,10 @@ package oop.ex6.variables.exceptions;
  */
 public class VariableIsFinal extends VariableException{
     private static final long serialVersionUID = 1L;
+    private static final String MESSAGE = "Final variable cannot be assigned after initialization.";
+
+    @Override
+    public String getMessage() {
+        return MESSAGE;
+    }
 }

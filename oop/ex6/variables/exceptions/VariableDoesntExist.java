@@ -7,4 +7,11 @@ package oop.ex6.variables.exceptions;
  */
 public class VariableDoesntExist extends VariableException {
     private static final long serialVersionUID = 1L;
+    private static final String MESSAGE = "Tried to assign a new value to a variable that doesn't exist " +
+            "in scope.";
+
+    @Override
+    public String getMessage() {
+        return MESSAGE;
+    }
 }
