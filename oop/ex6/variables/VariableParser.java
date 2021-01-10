@@ -13,12 +13,12 @@ import java.util.regex.Pattern;
 public abstract class VariableParser {
 
     private static final String FINAL = "final";
-    private static final String VALUE_FORMAT = "[\\w\"'\\-\\. ]+";
+    private static final String VALUE_FORMAT = ".(?:.|\\s)*";// "[\\w\"'\\-\\.\\s]+";
 
     private static final String SINGLE_VARIABLE_REGEX =
             String.format("(%s) *(?:= *(%s))?",Variable.getRegex(), VALUE_FORMAT);
     private static final String FORMAT =
-            String.format("^(%s +)?(%s) +((?:%s, *)*(?:%s)) *;$",
+            String.format("^(%s +)?(%s) +((?:%s, *)*(?:%s)) *; *$",
                     FINAL, VariableType.getRegex(), SINGLE_VARIABLE_REGEX, SINGLE_VARIABLE_REGEX);
     private static final String SET_VARIABLE_REGEX =
             String.format("^ *(%s) *= *(%s) *;$",  Variable.getRegex(), VALUE_FORMAT);
@@ -26,6 +26,12 @@ public abstract class VariableParser {
     private static final Pattern SINGLE_VARIABLE_PATTERN = Pattern.compile(SINGLE_VARIABLE_REGEX);
     private static final Pattern FULL_PATTERN = Pattern.compile(FORMAT);
     private static final Pattern SET_VARIABLE_PATTERN = Pattern.compile(SET_VARIABLE_REGEX);
+
+    private static final String METHOD_PARAMETERS_REGEX =
+            String.format("^(%s) +(%s)$", VariableType.getRegex(), Variable.getRegex());
+    private static final Pattern METHOD_PARAMETERS_PATTERN = Pattern.compile(METHOD_PARAMETERS_REGEX);
+
+    private static final String METHOD_PARAMETERS_SEPARATOR = " *, *";
 
     /**
      * This method receives a Block and a line (string), and updates the block's variable archives,
@@ -150,5 +156,28 @@ public abstract class VariableParser {
         }
         // if not, create the new variable with the string given
         block.addVariable(new Variable(name, type, value, isFinal, block.isGlobal()));
+    }
+
+    /**
+     * This method adds to a method block its parameters based in the given line.
+     * @param methodBlock - the MethodBlock to add parameters to.
+     * @param line - the line that includes the parameters.
+     * @throws IllegalMethodParameters - if the line is not in format of "VariableType Variable, ..."
+     * @throws TypeNotFoundException - if the type is not supported by SJava.
+     */
+    public static void createMethodParameters(MethodBlock methodBlock, String line)
+            throws IllegalMethodParameters, TypeNotFoundException, ParameterNameAlreadyExistsException {
+
+        for (String str : line.split(METHOD_PARAMETERS_SEPARATOR)) {
+            Matcher matcher = METHOD_PARAMETERS_PATTERN.matcher(str);
+            if (!matcher.find()) throw new IllegalMethodParameters();
+            String variableName = matcher.group(1);
+            VariableType variableType = VariableType.getType(matcher.group(2));
+
+            Variable variable = new Variable(variableName, variableType);
+            variable.initialize();
+
+            methodBlock.addParameter(variable);
+        }
     }
 }

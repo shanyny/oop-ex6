@@ -9,22 +9,14 @@ import java.util.Iterator;
 /**
  * @author Shany Gindi and Roy Urbach
  */
-public class LineParser {
+public abstract class LineParser {
 
-    private final Iterable<String> strings;
-    private Iterator<String> currIterator;
-    private Block block;
 
-    public LineParser(Block block, Iterable<String> strings) {
-        this.strings = strings;
-        this.block = block;
-    }
-
-    public void parse() throws BlockException, VariableException, OneLinerException {
-        currIterator = strings.iterator();
+    public static void parse(Block block, Iterable<String> strings) throws BlockException, VariableException, OneLinerException {
+        Iterator<String> currIterator = strings.iterator();
         while (currIterator.hasNext()) {
             String currLine = currIterator.next();
-            classifyLine(currLine);
+            classifyLine(block, currLine, currIterator);
         }
     }
 
@@ -34,11 +26,12 @@ public class LineParser {
      *
      * @param line String of the current line in file
      */
-    private void classifyLine(String line) throws BlockException, VariableException, OneLinerException {
+    private static void classifyLine(Block block, String line, Iterator<String> stringIterator) throws BlockException, VariableException, OneLinerException {
 
         for (LineType lineType : LineType.values()) {
             if (lineType.isMatching(line)) {
-                lineType.parseLine(block, currIterator, line);
+                lineType.parseLine(block, stringIterator, line);
+                return;
             }
         }
         throw new LineUnknownFormatException();

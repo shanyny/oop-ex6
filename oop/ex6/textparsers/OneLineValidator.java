@@ -1,10 +1,10 @@
 package oop.ex6.textparsers;
 
 import oop.ex6.blocks.Block;
+import oop.ex6.blocks.ConditionParameterNotBoolean;
 import oop.ex6.blocks.MethodBlock;
 import oop.ex6.textparsers.exceptions.*;
-import oop.ex6.variables.Variable;
-import oop.ex6.variables.VariableParser;
+import oop.ex6.variables.*;
 import oop.ex6.variables.exceptions.VariableException;
 
 import java.util.LinkedList;
@@ -16,13 +16,14 @@ import java.util.regex.Pattern;
  * That is - adds/changes variables or validate method calls.
  * @author Shany Gindi and Roy Urbach
  */
-public abstract class ValidateOneLiner {
+public abstract class OneLineValidator {
 
     private final static String METHOD_CALL_FORMAT = "^(\\w+)\\((.*)\\);$";
     private final static Pattern METHOD_CALL_PATTERN = Pattern.compile(METHOD_CALL_FORMAT);
     private final static Pattern METHOD_RETURN_PATTERN = Pattern.compile("^\\s*return\\s*;\\s*$");
 
-    private static final String SEPARATOR = " *, *";
+    private static final String CALL_METHOD_SEPARATOR = " *, *";
+    private static final String CONDITION_SEPARATOR = " *\\|{2}|&& *";
 
 
     /**
@@ -34,11 +35,12 @@ public abstract class ValidateOneLiner {
      * @throws MethodCallException - problem with calling a method.
      * @throws VariableException - problem with initializing or assigning variables.
      */
-    public static void validate(Block scope, String line) throws MethodCallException, VariableException, ReturnOutsideMethodBlockException {
+    public static void validateOneLiner(Block scope, String line) throws MethodCallException, VariableException, ReturnOutsideMethodBlockException {
         Matcher methodCallMatcher = METHOD_CALL_PATTERN.matcher(line);
         Matcher methodReturnMatcher = METHOD_RETURN_PATTERN.matcher(line);
 
         if (methodCallMatcher.find()) {
+            if (scope.isGlobal()) throw new MethodCallInMainBlockException();
             MethodBlock methodBlock = scope.getMethod(methodCallMatcher.group(1));
             if (methodBlock == null) throw new CalledUnknownMethod();
             else checkCallMethod(scope, methodBlock, methodCallMatcher.group(2));
@@ -60,7 +62,7 @@ public abstract class ValidateOneLiner {
     private static void checkCallMethod(Block scope, MethodBlock method, String argumentStr)
             throws MethodCallParametersNotCompatible, TooLittleArguments, TooManyArguments {
         LinkedList<Variable> parameters = method.getParameters();
-        String[] arguments =  argumentStr.split(SEPARATOR);
+        String[] arguments =  argumentStr.split(CALL_METHOD_SEPARATOR);
         int i = 0;
         try {
             for (Variable parameter : parameters) {
@@ -72,5 +74,31 @@ public abstract class ValidateOneLiner {
         } catch (VariableException e) {throw new MethodCallParametersNotCompatible();}
         catch (ArrayIndexOutOfBoundsException e) {throw new TooLittleArguments();}
         if (i != arguments.length) throw new TooManyArguments();
+    }
+
+    /**
+     * This method checks if a method declaration is alright.
+     * @param block - the scope to look at and update.
+     * @throws MethodCreationException - problem with calling a method.
+     */
+    public static void validateMethodDeclaration(Block block, LinkedList<String> blockLines, String methodName) throws MethodCreationException {
+        if (!block.isGlobal()){throw new MethodNotInMainBlockException();}
+        if (block.getMethod(methodName) != null) {throw new MethodAlreadyExistsException();}
+        if (!blockLines.get(blockLines.size()-2).equals("return;")){throw new MethodDoesntEndInReturnException();}
+    }
+
+    /**
+     * This method validates the condition of the ConditionalBlock.
+     * @throws ConditionParameterNotBoolean - if parameters are not boolean.
+     */
+    public static void validateCondition(Block scope, String condition) throws ConditionParameterNotBoolean {
+        try {
+            Variable checkBoolean = new Variable("checkBoolean", VariableType.BOOLEAN);
+            for (String str : condition.split(CONDITION_SEPARATOR)) {
+                Variable variable = scope.getVariable(str, false);
+                if (variable == null) checkBoolean.setValue(str);
+                else checkBoolean.setValue(variable);
+            }
+        } catch (VariableException e) {throw new ConditionParameterNotBoolean();}
     }
 }

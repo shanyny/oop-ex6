@@ -117,7 +117,7 @@ public class Variable {
      */
     public void setValue(String newValue) throws NewValueNotCompatible, VariableIsFinal {
         if (newValue != null) {
-            if (!isFinal) throw new VariableIsFinal();
+            if (isFinal) throw new VariableIsFinal();
             else if (getType().canSetTo(newValue)) initialize();
             else throw new NewValueNotCompatible();
         }

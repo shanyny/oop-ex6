@@ -2,8 +2,8 @@ package oop.ex6.textparsers;
 
 import oop.ex6.blocks.*;
 import oop.ex6.textparsers.exceptions.*;
+import oop.ex6.variables.VariableParser;
 import oop.ex6.variables.exceptions.*;
-
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -20,27 +20,34 @@ enum LineType {
     EMPTY(Pattern.compile("^\\s*$")),
     CONDITION(Pattern.compile("^(?:if|while)\\((.*)\\)\\{\\s*$")){
         @Override
-        void parseLine(Block block, Iterator<String> strings,String line) throws BlockException {
+        void parseLine(Block block, Iterator<String> strings,String line) throws BlockException, VariableException, OneLinerException {
             if (block.isGlobal()){throw new ConditionInMainBlockException();}
             String condition = getMatcher(line).group(1);
             LinkedList<String> blockLines = getBlockLines(strings);
-            new ConditionalBlock(block,blockLines,condition);
+            OneLineValidator.validateCondition(block, condition);
+            new ConditionalBlock(block, blockLines);
         }
     },
     METHOD(Pattern.compile("^void\\s(.*)\\((.*)\\)\\{\\s*$")){
         @Override
         void parseLine(Block block, Iterator<String> strings,String line) throws VariableException, BlockException,OneLinerException {
             Matcher m = getMatcher(line);
+            m.matches();
             String methodName = m.group(1);
             String methodParameters = m.group(2);
             LinkedList<String> blockLines = getBlockLines(strings);
-            ValidateMethodDeclaration.validate(block,blockLines,methodName,methodParameters,line);
+
+            OneLineValidator.validateMethodDeclaration(block, blockLines, methodName);
+
+            MethodBlock methodBlock = new MethodBlock(block, blockLines, methodName);
+            block.addMethod(methodBlock);
+            VariableParser.createMethodParameters(methodBlock, methodParameters);  // add parameters to method
         }
     },
     ONELINER(Pattern.compile(".*;\\s*$")){
         @Override
         void parseLine(Block block, Iterator<String> strings,String line) throws OneLinerException, VariableException {
-            ValidateOneLiner.validate(block,line);
+            OneLineValidator.validateOneLiner(block,line);
         }
     },
     CLOSEBLOCK(Pattern.compile("^\\s*}\\s*$"));
@@ -84,8 +91,7 @@ enum LineType {
      * @throws VariableException
      * @throws OneLinerException
      */
-    void parseLine(Block block, Iterator<String> strings,String line) throws BlockException,VariableException,OneLinerException {
-        return;
+    void parseLine(Block block, Iterator<String> strings,String line) throws BlockException, VariableException, OneLinerException {
     }
 
 
@@ -95,7 +101,7 @@ enum LineType {
      * @return LinkedList of oop.ex6.lines in the block
      * @throws BlockBracketsException
      */
-    LinkedList<String> getBlockLines(Iterator<String> currIterator) throws BlockException {
+    static LinkedList<String> getBlockLines(Iterator<String> currIterator) throws BlockException {
         LinkedList<String> blockStrings = new LinkedList<>();
         int bracketCounter = 1;
         String currLine;
@@ -114,5 +120,4 @@ enum LineType {
         }
         return blockStrings;
     }
-
 }

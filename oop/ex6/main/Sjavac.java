@@ -19,6 +19,34 @@ public abstract class Sjavac {
     private static final String IO_PROBLEM = "" + 2;
     private static final String IO_PROBLEM_MESSAGE = "IOException: Problem reading the file.";
 
+//    /**
+//     * This method receives a filename of a SJava script.
+//     * If the code is valid - prints 0.
+//     * If the code is illegal - prints 1, then an indicative error message.
+//     * if there were problems reading the file - prints 2.
+//     * @param args - an array where in its first place sits the filename of the script to check.
+//     */
+//    public static void main(String[] args) {
+//        File file = new File(args[0]);
+//        Iterable<String> sJavaScript;
+//        try {sJavaScript = FileReader.getString(file);}
+//        catch (IOException e) {
+//            System.out.println(IO_PROBLEM);
+//            System.err.println(IO_PROBLEM_MESSAGE);
+//            return;
+//        }
+//
+//        try {
+//            MainBlock mainBlock = new MainBlock(sJavaScript);
+//        } catch (IllegalSJavaCode e) {
+//            System.out.println(CODE_IS_ILLEGAL);
+//            System.err.println(e.getMessage());
+//            return;
+//        }
+//
+//        System.out.println(CODE_IS_LEGAL);
+//    }
+
     /**
      * This method receives a filename of a SJava script.
      * If the code is valid - prints 0.
@@ -27,25 +55,27 @@ public abstract class Sjavac {
      * @param args - an array where in its first place sits the filename of the script to check.
      */
     public static void main(String[] args) {
-
         File file = new File(args[0]);
-        Iterable<String> sJavaScript;
-        try {sJavaScript = FileReader.getString(file);}
-        catch (IOException e) {
-            System.out.println(IO_PROBLEM);
-            System.err.println(IO_PROBLEM_MESSAGE);
-            return;
-        }
+        for (File test : file.listFiles()) {
+            System.out.println(test.getName());
+            Iterable<String> sJavaScript;
+            try {
+                sJavaScript = FileReader.getString(test);  // change to file
+            } catch (IOException e) {
+                System.out.println(IO_PROBLEM);
+                System.out.println(IO_PROBLEM_MESSAGE);
+                continue; //return;
+            }
 
-        try {
-            MainBlock mainBlock = new MainBlock(sJavaScript);
-            mainBlock.validate();
-        } catch (IllegalSJavaCode e) {
-            System.out.println(CODE_IS_ILLEGAL);
-            System.err.println(e.getMessage());
-            return;
-        }
+            try {
+                new MainBlock(sJavaScript);  // do the actual test
+            } catch (IllegalSJavaCode e) {
+                System.out.println(CODE_IS_ILLEGAL);
+                System.out.println(e.getMessage());
+                continue; //return;
+            }
 
-        System.out.println(CODE_IS_LEGAL);
+            System.out.println(CODE_IS_LEGAL);
+        }
     }
 }

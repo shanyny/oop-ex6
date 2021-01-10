@@ -1,27 +1,19 @@
 package oop.ex6.blocks;
 
+import oop.ex6.textparsers.exceptions.OneLinerException;
 import oop.ex6.variables.Variable;
+import oop.ex6.variables.exceptions.VariableException;
 
 import java.util.LinkedList;
 
 public class MethodBlock extends Block {
 
-    private static final String NAME_REGEX = "[a-zA-Z][a-zA-Z_0-9]*";
-    public static final String PARAMETER_EMPTY_REGEX = "\\((\\s?(final)?\\s%s\\s%s(,\\s?(final)?\\s%s\\s%s)*)\\)";
-    private static final String PARAMETERS_REGEX = String.format(PARAMETER_EMPTY_REGEX,NAME_REGEX,NAME_REGEX,NAME_REGEX,NAME_REGEX);
-    public static final String METHOD_EMPTY_REGEX = "^void\\s(%s)\\s\\((%s)\\)\\s?{$";
-    public static final String METHOD_REGEX = String.format(METHOD_EMPTY_REGEX,NAME_REGEX,PARAMETERS_REGEX);
-    private final LinkedList<Variable> parameters = new LinkedList<Variable>();
+    private final LinkedList<Variable> parameters = new LinkedList<>();
     private final String name;
 
-    public MethodBlock(Block parent, Iterable<String> strings, String name, String declaration) {
+    public MethodBlock(Block parent, Iterable<String> strings, String name) throws BlockException, VariableException, OneLinerException {
         super(parent, strings);
         this.name = name;
-    }
-
-    @Override
-    public void validate() {
-
     }
 
     /**
@@ -36,8 +28,8 @@ public class MethodBlock extends Block {
     /**
      * This method adds a parameter to the parameters linked list.
      */
-    public void addParameter(Variable parameter) {
-        if (getVariable(parameter.getName(), true) != null) throw new Exception();
+    public void addParameter(Variable parameter) throws ParameterNameAlreadyExistsException {
+        if (getVariable(parameter.getName(), true) != null) throw new ParameterNameAlreadyExistsException();
         else {
             parameters.add(parameter);
             addVariable(parameter);

@@ -5,32 +5,27 @@ import oop.ex6.variables.*;
 import oop.ex6.variables.exceptions.VariableException;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 public abstract class Block {
 
     private final HashMap<String, Variable> variables = new HashMap<>();
-    private final HashMap<String, Block> subBlocks = new HashMap<>();
-//    private final LinkedList<oop.ex6.blocks.ConditionalBlock> conditionals = new LinkedList<>();
-    private final LineParser lineParser;
+    private HashMap<String, MethodBlock> methods;
     public final Iterable<String> strings;
     private final Block parent;
-
-
-
 
     public Block(Block parent, Iterable<String> strings) throws BlockException, VariableException, OneLinerException {
         this.parent = parent;
         this.strings = strings;
-        lineParser = new LineParser(this,strings);
-        lineParser.parse();
     }
 
-    protected void validate() throws ConditionParameterNotBoolean{
-//        for (Block block: )
+    protected void validate() throws BlockException, VariableException, OneLinerException {
+        LineParser.parse(this, strings);
+        if (methods != null) {
+            for (MethodBlock methodBlock : methods.values()) {
+                methodBlock.validate();
+            }
+        }
     }
 
     public boolean isGlobal(){
@@ -66,10 +61,12 @@ public abstract class Block {
      * @return a MethodBlock in the block's ancestors scope with the same name as the argument given.
      */
     public MethodBlock getMethod(String methodName) {
-        MethodBlock method = methods.get(methodName);
-        if (method != null) return method;
-        else if (!isGlobal()) return parent.getMethod(methodName);
-        else return null;
+        if (methods != null) {
+            MethodBlock method = methods.get(methodName);
+            if (method != null) return method;
+            else if (!isGlobal()) return parent.getMethod(methodName);
+        }
+        return null;
     }
 
     /**
@@ -77,6 +74,7 @@ public abstract class Block {
      * @param methodBlock - the MethodBlock to add.
      */
     public void addMethod(MethodBlock methodBlock) {
+        if (methods == null) methods = new HashMap<>();
         methods.put(methodBlock.getName(), methodBlock);
     }
 }
