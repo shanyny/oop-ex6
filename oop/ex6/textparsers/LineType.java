@@ -13,13 +13,16 @@ import java.util.regex.Pattern;
 
 enum LineType {
     COMMENT(Pattern.compile("^//")),
-    EMPTY(Pattern.compile("^$")),
-    CONDITION(Pattern.compile("(if|while)\\(.*\\)\\{$")),
+    EMPTY(Pattern.compile("^\\s*$")),
+    CONDITION(Pattern.compile("(if|while)\\(.*\\)\\{$")){
+        boolean parseLine(String line){
+
+        }
+    },
     METHOD(Pattern.compile(".*\\(.*\\)\\{$")),
     ONELINER(Pattern.compile(".*;$")),
-    METHODCALL(Pattern.compile(".*\\(.*\\);$")),
-    CLOSEBLOCK(Pattern.compile("^}$")),
-    OPENBLOCK(Pattern.compile("^.*\\{$"));
+    CLOSEBLOCK(Pattern.compile("^}$"));
+
 
 
 
@@ -34,6 +37,7 @@ enum LineType {
         this.pattern = p;
     }
 
+//    abstract boolean isMatching(String line);
 
     boolean isMatching(String line){
         return getMatcher(line).matches();
@@ -44,20 +48,10 @@ enum LineType {
         return pattern.matcher(line);
     }
 
-    /**
-     * Adding all catched groups to a String array and returns the values.
-     * @param line
-     * @return
-     */
-    String[] getGroups(String line){
-        Matcher matcher = getMatcher(line);
-        int num_of_groups = matcher.groupCount();
-        String[] groups = new String[num_of_groups];
-        for (int i = 0 ;i < num_of_groups;i++){
-            groups[i] = matcher.group(i);
-        }
-        return groups;
+    void parseLine(String line){
+        return;
     }
+
 
     /**
      * This method receives a string indicative of a variable's type and returns the enum it belongs to.
@@ -71,29 +65,4 @@ enum LineType {
         } throw new TypeNotFoundException();
     }
 
-    /**
-     * This methods returns true if this variable type can change its value to the given variable's type.
-     * @param variable - the variable to change the value to.
-     * @return true if compatible, false if not.
-     */
-    boolean canSetTo(Variable variable) {
-        VariableType type = variable.getType();
-        switch (this) {
-            case STRING: return type == STRING;
-            case INT: return type == INT;
-            case DOUBLE: return type == DOUBLE || type == INT;
-            case BOOLEAN: return type == BOOLEAN || type == INT || type == DOUBLE;
-            case CHAR: return type == CHAR;
-        } return false;
-    }
-
-    /**
-     * This methods returns true if this variable type can change its value to the given string's value.
-     * @param str - the value to change the variable's value to - represented as a string.
-     * @return true if compatible, false if not.
-     */
-    boolean canSetTo(String str) {
-        if (str == null) return true;
-        else return this.p.matcher(str).matches();
-    }
 }
