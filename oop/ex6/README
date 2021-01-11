@@ -70,12 +70,12 @@ VariableException.java - abstract exception for variable-based exceptions.
 =============================
 =          Design           =
 =============================
-Sjavac is the main class running the whole program. the program is parsing (using different textparsers) a Sjava program textual file into
-block elements that each has a unique memory scope that contains local variables and/or methods. There are 3 block types
-that inherit from Block class and each is implementing a different type of scope properties. MainBlock is the global
-scope of the program and all other scopes are of MethodBlock or ConditionalBlock type. Each block holds the different
-blocks inside its scope and a pointer to its parent scope. that way, when searching for a variable or a method,
-each block can search for it in its own scope or recursively upwards.
+Sjavac is the main class running the whole program. the program is parsing (using different textparsers)
+a Sjava program textual file into block elements that each has a unique memory scope that contains local variables
+and/or methods. There are 3 block types that inherit from Block class and each is implementing a different
+type of scope properties. MainBlock is the global scope of the program and all other scopes are of MethodBlock or
+ConditionalBlock type. Each block holds the different blocks inside its scope and a pointer to its parent scope.
+that way, when searching for a variable or a method, each block can search for it in its own scope or recursively upwards.
 All Block type classes have a validate method that is in charge of iterating over the block's text and checking if it
 is a legal Sjava code. validation is done using the text parsers LineParser, LineType and OneLineValidator
 and recursively calling validate for all sub blocks in the scope. LineParser is a static class that iterates through
