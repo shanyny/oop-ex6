@@ -6,53 +6,59 @@ yabanzik
 =============================
 
 package oop.ex6.blocks:
-Block.java
-ConditionalBlock.java
-MainBlock.java
-MethodBlock.java
+Block.java - an abstract form of a general block of code in Sjava files. Other blocks inherit from it.
+MainBlock.java - extends Block represents the global Sjava code's scope. Therefore, one MainBlock per file.
+ConditionalBlock.java - represents a If or While statement. Extends block class and validates on creation.
+MethodBlock.java - extends Block and represents a method. Each method name is registered under its MainBlock.
 
 package oop.ex6.blocks.exceptions:
-BlockException.java
-ConditionParameterNotBooleanException.java
-ParameterNameAlreadyExistsException.java
+BlockException.java - abstract exception that represents a general pool of block related exceptions.
+ConditionParameterNotBooleanException.java - thrown if the given condition is not boolean.
+ParameterNameAlreadyExistsException.java - thrown if a method has two parameters with the same name.
 
 package oop.ex6.main:
-FileReader.java
-IllegalSJavaCode.java
-Sjavac.java
+FileReader.java - abstract class with a single method that returns a given file's contents as an Iterable.
+IllegalSJavaCodeException.java - abstract exception that represents all Illegal code exceptions.
+Sjavac.java - the program's main class. abstract class that receives SJava filename and declares its validity.
 
 package oop.ex6.textparsers:
-LineParser.java
-LineType.java
-OneLineValidator.java
+LineParser.java - an abstract parser that creates sub-blocks and validates each line in a block.
+LineType.java - an enum representing the different types of lines available.
+OneLineValidator.java - abstract class with static method that validates a single SJava script line.
 
 package oop.ex6.textparsers.exceptions:
-BlockBracketsException.java
-MethodCallException.java
-MethodNotInMainBlockException.java
-CalledUnknownMethodException.java
-MethodCallInMainBlockException.java
-OneLinerException.java
-CloseBracketOutsideBlockException.java
-MethodCallParametersNotCompatibleException.java ReturnOutsideMethodBlockException.java
-ConditionInMainBlockException.java
-MethodCreationException.java
-TooLittleArgumentsException.java
-MethodAlreadyExistsException.java
-MethodDoesntEndInReturnException.java
-TooManyArgumentsException.java
+BlockBracketsException.java - thrown when reached the end of the file without closing a statement (bracket).
+OneLinerException.java - abstract. Represents method calls, variable assignment and initialization exceptions.
+CloseBracketOutsideBlockException.java - thrown when trying to close a block outside of a block's scope.
+ReturnOutsideMethodBlockException.java - thrown when there is a return statement outside of a method block.
+ConditionInMainBlockException.java - thrown when opening a condition block in the main block of the program.
+LineUnknownFormatException.java - thrown if a block's line doesn't match any known format of sjava lines.
+
+package oop.ex6.textparsers.exceptions.methodcall:
+MethodCallException.java - abstract and represents all method calls exceptions.
+CalledUnknownMethodException.java - thrown whenever trying to call a method which doesn't exist.
+MethodCallParametersNotCompatibleException.java - thrown when calling a method with arguments that don't fit.
+MethodCallInMainBlockException.java - thrown whenever trying to call a method outside of a method block.
+TooLittleArgumentsException.java - thrown when calling a method without enough arguments.
+TooManyArgumentsException.java - thrown when calling a method with too many arguments.
+
+package oop.ex6.textparsers.exceptions.methodcreation:
+MethodAlreadyExistsException.java - thrown when creating two methods with the same name.
+MethodCreationException.java - abstract and represents all method calls exceptions.
+MethodDoesntEndInReturnException.java - thrown when creating a method without return statement at the end.
+MethodNotInMainBlockException.java - thrown when declaring a method in lower scope than allowed (not global).
 
 package oop.ex6.variables:
-Variable.java
-VariableParser.java
-VariableType.java
+Variable.java - represents a SJava variable, with type, name and initialization, final and global fields.
+VariableParser.java - abstract class with static methods that parse a variable line, and create parameters.
+VariableType.java - enum that represents the different SJava types available.
 
 package oop.ex6.variables.exceptions:
-FinalVariableNotInitializedException.java
-TypeNotFoundException.java
-VariableIsFinalException.java
-IllegalMethodParametersException.java
-VariableAlreadyExistsInScopeException.java
+FinalVariableNotInitializedException.java - thrown if a variable is declared final but is not initialized.
+TypeNotFoundException.java - thrown when creating a variable of a type which is not supported in SJava.
+VariableIsFinalException.java - thrown whenever trying to assign a new value to a final variable.
+IllegalMethodParametersException.java - thrown if a method's parameters are illegal.
+VariableAlreadyExistsInScopeException.java - thrown if a two variables in the same scope have the same name.
 VariableNotInitializedException.java
 InvalidVariableInitializationException.java
 VariableDoesntExistException.java

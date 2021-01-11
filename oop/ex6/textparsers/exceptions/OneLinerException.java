@@ -3,7 +3,8 @@ package oop.ex6.textparsers.exceptions;
 import oop.ex6.main.IllegalSJavaCodeException;
 
 /**
- * This exception is abstract and represents all method calls exceptions.
+ * This exception is abstract and represents all method calls and
+ * variable assignment and initialization exceptions.
  * @author Shany Gindi and Roy Urbach
  */
 public abstract class OneLinerException extends IllegalSJavaCodeException {

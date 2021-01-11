@@ -1,7 +1,7 @@
 package oop.ex6.textparsers.exceptions.methodcreation;
 
 /**
- * This exception is abstract and represents all method calls exceptions.
+ * This exception is thrown when creating a method without using return at the last line.
  * @author Shany Gindi and Roy Urbach
  */
 public class MethodDoesntEndInReturnException extends MethodCreationException {

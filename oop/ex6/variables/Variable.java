@@ -50,7 +50,8 @@ public class Variable {
      */
     public Variable(String name, VariableType type, String value,
                     boolean isFinal, boolean isGlobal)
-            throws NewValueNotCompatibleException, VariableIsFinalException, FinalVariableNotInitializedException {
+            throws NewValueNotCompatibleException, VariableIsFinalException,
+            FinalVariableNotInitializedException {
         setVariable(name, type);
         this.isGlobal = isGlobal;
         setValue(value);

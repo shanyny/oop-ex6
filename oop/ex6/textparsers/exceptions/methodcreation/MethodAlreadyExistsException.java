@@ -1,7 +1,7 @@
 package oop.ex6.textparsers.exceptions.methodcreation;
 
 /**
- * This exception is abstract and represents all method calls exceptions.
+ * This exception is thrown when creating two methods with the same name.
  * @author Shany Gindi and Roy Urbach
  */
 public class MethodAlreadyExistsException extends MethodCreationException {

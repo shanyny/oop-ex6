@@ -3,7 +3,7 @@ package oop.ex6.textparsers.exceptions;
 import oop.ex6.blocks.exceptions.BlockException;
 
 /**
- * This exception is abstract and represents all method calls exceptions.
+ * This exception is thrown when trying to open a condition block in the main block of the program.
  * @author Shany Gindi and Roy Urbach
  */
 public class ConditionInMainBlockException extends BlockException {

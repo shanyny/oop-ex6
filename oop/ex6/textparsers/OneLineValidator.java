@@ -5,10 +5,7 @@ import oop.ex6.blocks.exceptions.ConditionParameterNotBooleanException;
 import oop.ex6.blocks.MethodBlock;
 import oop.ex6.textparsers.exceptions.*;
 import oop.ex6.textparsers.exceptions.methodcall.*;
-import oop.ex6.textparsers.exceptions.methodcreation.MethodAlreadyExistsException;
-import oop.ex6.textparsers.exceptions.methodcreation.MethodCreationException;
-import oop.ex6.textparsers.exceptions.methodcreation.MethodDoesntEndInReturnException;
-import oop.ex6.textparsers.exceptions.methodcreation.MethodNotInMainBlockException;
+import oop.ex6.textparsers.exceptions.methodcreation.*;
 import oop.ex6.variables.*;
 import oop.ex6.variables.exceptions.VariableException;
 
@@ -21,7 +18,7 @@ import java.util.regex.Pattern;
  * That is - adds/changes variables or validate method calls.
  * @author Shany Gindi and Roy Urbach
  */
-public abstract class OneLineValidator {
+abstract class OneLineValidator {
 
     /* A regex string representing a simple method call*/
     private final static String METHOD_CALL_FORMAT = "^(\\w+)\\((.*)\\)\\s*;\\s*$";

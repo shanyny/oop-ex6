@@ -1,7 +1,6 @@
 package oop.ex6.textparsers;
 
 import oop.ex6.blocks.*;
-import oop.ex6.textparsers.exceptions.BlockBracketsException;
 import oop.ex6.blocks.exceptions.BlockException;
 import oop.ex6.textparsers.exceptions.*;
 import oop.ex6.variables.VariableParser;
@@ -25,7 +24,8 @@ enum LineType {
     CONDITION(Pattern.compile("^(?:if|while)\\((.*)\\)\\s*\\{\\s*$")){
         /** This method is validating a condition using OneLineValidator and creates a ConditionalBlock Object. */
         @Override
-        void parseLine(Block block, Iterator<String> strings,String line) throws BlockException, VariableException, OneLinerException {
+        void parseLine(Block block, Iterator<String> strings,String line)
+                throws BlockException, VariableException, OneLinerException {
             if (block.isGlobal()){throw new ConditionInMainBlockException();}
             String condition = getMatcher(line).group(1);
             LinkedList<String> blockLines = getBlockLines(strings);
@@ -36,7 +36,8 @@ enum LineType {
     METHOD(Pattern.compile("^void\\s(.*)\\((.*)\\)\\s*\\{\\s*$")){
         /** This method is validating a block using OneLineValidator and creates a MethodBlock Object. */
         @Override
-        void parseLine(Block block, Iterator<String> strings,String line) throws VariableException, BlockException,OneLinerException {
+        void parseLine(Block block, Iterator<String> strings,String line)
+                throws VariableException, BlockException,OneLinerException {
             Matcher m = getMatcher(line);
             m.matches();
             String methodName = m.group(1);
@@ -53,7 +54,8 @@ enum LineType {
     ONELINER(Pattern.compile("^[^/].*\\s*;\\s*$")){
         /** This method is validating a line of code using OneLineValidator.*/
         @Override
-        void parseLine(Block block, Iterator<String> strings,String line) throws OneLinerException, VariableException {
+        void parseLine(Block block, Iterator<String> strings,String line)
+                throws OneLinerException, VariableException {
             OneLineValidator.validateOneLiner(block,line);
         }
     },
@@ -121,7 +123,8 @@ enum LineType {
      * @throws VariableException - general exception regarding variable errors
      * @throws OneLinerException - general exception regarding one liner command errors
      */
-    void parseLine(Block block, Iterator<String> strings,String line) throws BlockException, VariableException, OneLinerException {
+    void parseLine(Block block, Iterator<String> strings,String line)
+            throws BlockException, VariableException, OneLinerException {
     }
 
 
@@ -129,7 +132,7 @@ enum LineType {
      * This method is validating a block structure and returns it's content
      * @param currIterator line iterator to run on
      * @return LinkedList of oop.ex6.lines in the block
-     * @throws BlockBracketsException
+     * @throws BlockBracketsException - if reached the end of the program without closing bracket.
      */
     static LinkedList<String> getBlockLines(Iterator<String> currIterator) throws BlockBracketsException {
 

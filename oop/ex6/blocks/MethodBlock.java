@@ -6,15 +6,16 @@ import oop.ex6.variables.Variable;
 import java.util.LinkedList;
 
 /**
- * This class extends Block and represents a method. Each method name is registered under it's MainBlock and consists of
- * preinitialize parameters that are given when the method is called.
+ * This class extends Block and represents a method. Each method name is registered under its MainBlock
+ * and consists of pre-initialize parameters that are given when the method is called.
+ * @author Shany Gindi and Roy Urbach
  */
 public class MethodBlock extends Block {
 
-    /* the method parameters that are automatically initialized on creation. */
+    /* the method's parameters that are automatically initialized on creation. */
     private final LinkedList<Variable> parameters = new LinkedList<>();
 
-    /* the method name */
+    /* the method's name. */
     private final String name;
 
     /**
@@ -41,7 +42,9 @@ public class MethodBlock extends Block {
      * This method adds a parameter to the parameters linked list.
      */
     public void addParameter(Variable parameter) throws ParameterNameAlreadyExistsException {
-        if (getVariable(parameter.getName(), true) != null) throw new ParameterNameAlreadyExistsException();
+        if (getVariable(parameter.getName(), true) != null) {
+            throw new ParameterNameAlreadyExistsException();
+        }
         else {
             parameters.add(parameter);
             addVariable(parameter);
