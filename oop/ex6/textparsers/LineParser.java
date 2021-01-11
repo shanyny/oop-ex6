@@ -18,13 +18,14 @@ public abstract class LineParser {
 
     /**
      * This static method is iterating over all
-     * @param block
-     * @param strings
-     * @throws BlockException
-     * @throws VariableException
-     * @throws OneLinerException
+     * @param block block object of the current scope
+     * @param strings iterable of the textual lines in the current block
+     * @throws BlockException - general exception regarding block errors
+     * @throws VariableException - general exception regarding variable errors
+     * @throws OneLinerException - general exception regarding one liner command errors
      */
-    public static void parse(Block block, Iterable<String> strings) throws BlockException, VariableException, OneLinerException {
+    public static void parse(Block block, Iterable<String> strings)
+            throws BlockException, VariableException, OneLinerException {
         Iterator<String> currIterator = strings.iterator();
         while (currIterator.hasNext()) {
             String currLine = currIterator.next();
@@ -34,11 +35,12 @@ public abstract class LineParser {
 
     /**
      * This method is receiving a single line and deciding if its opening a method,
-     * a conditional block, a comment, if it's empty or if its a single line Pattern.
-     *
+     * a conditional block, a comment, if it's empty or if its a single line by using LineType enum.
      * @param line String of the current line in file
+     * @throws LineUnknownFormatException - if the line doesn't match any known form of sjava line
      */
-    private static void classifyLine(Block block, String line, Iterator<String> stringIterator) throws BlockException, VariableException, OneLinerException {
+    private static void classifyLine(Block block, String line, Iterator<String> stringIterator)
+            throws BlockException, VariableException, OneLinerException {
 
         for (LineType lineType : LineType.values()) {
             if (lineType.isMatching(line)) {

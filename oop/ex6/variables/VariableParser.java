@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 /**
  * This class is a abstract class with static methods that parse a line which initializes or sets a variable.
+ * It also consists of a method devoted to creating parameter variables for a MethodBlock object.
  * @author Shany Gindi and Roy Urbach
  */
 public abstract class VariableParser {

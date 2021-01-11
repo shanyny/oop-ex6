@@ -10,13 +10,13 @@ import oop.ex6.variables.exceptions.VariableException;
 public class ConditionalBlock extends Block {
 
     /**
-     * This constructor is using it's super constructor and using validate() to immidiatly
+     * This constructor is using it's super constructor and using validate() to immediately
      * validate the block on creation. sjava don't allow methods inside methods.
      * @param parent the upper scope block object
      * @param strings iterable of the textual lines in the block
-     * @throws BlockException
-     * @throws VariableException
-     * @throws OneLinerException
+     * @throws BlockException - general exception regarding block errors
+     * @throws VariableException - general exception regarding variable errors
+     * @throws OneLinerException - general exception regarding one liner command errors
      */
     public ConditionalBlock(Block parent, Iterable<String> strings) throws BlockException, VariableException, OneLinerException {
         super(parent, strings);

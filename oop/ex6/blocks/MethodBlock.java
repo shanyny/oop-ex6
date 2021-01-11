@@ -1,19 +1,29 @@
 package oop.ex6.blocks;
 
-import oop.ex6.blocks.exceptions.BlockException;
 import oop.ex6.blocks.exceptions.ParameterNameAlreadyExistsException;
-import oop.ex6.textparsers.exceptions.OneLinerException;
 import oop.ex6.variables.Variable;
-import oop.ex6.variables.exceptions.VariableException;
 
 import java.util.LinkedList;
 
+/**
+ * This class extends Block and represents a method. Each method name is registered under it's MainBlock and consists of
+ * preinitialize parameters that are given when the method is called.
+ */
 public class MethodBlock extends Block {
 
+    /* the method parameters that are automatically initialized on creation. */
     private final LinkedList<Variable> parameters = new LinkedList<>();
+
+    /* the method name */
     private final String name;
 
-    public MethodBlock(Block parent, Iterable<String> strings, String name) throws BlockException, VariableException, OneLinerException {
+    /**
+     * A simple constructor that uses it's super constructor and assigning a name to this method.
+     * @param parent block object of upper scope block
+     * @param strings iterable of the textual lines in the block
+     * @param name the string name identifying the specific method
+     */
+    public MethodBlock(Block parent, Iterable<String> strings, String name) {
         super(parent, strings);
         this.name = name;
     }

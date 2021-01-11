@@ -18,9 +18,10 @@ import java.util.regex.Pattern;
  */
 
 enum LineType {
-    COMMENT(Pattern.compile("^/{2}.*")),
+    COMMENT(Pattern.compile("^/{2}[.\\s]*")),
     EMPTY(Pattern.compile("^\\s*$")),
-    CONDITION(Pattern.compile("^(?:if|while)\\((.*)\\)\\{\\s*$")){
+    CONDITION(Pattern.compile("^(?:if|while)\\((.*)\\)\\s*\\{\\s*$")){
+        /** This method is validating a condition using OneLineValidator and creates a ConditionalBlock Object. */
         @Override
         void parseLine(Block block, Iterator<String> strings,String line) throws BlockException, VariableException, OneLinerException {
             if (block.isGlobal()){throw new ConditionInMainBlockException();}
@@ -30,7 +31,8 @@ enum LineType {
             new ConditionalBlock(block, blockLines);
         }
     },
-    METHOD(Pattern.compile("^void\\s(.*)\\((.*)\\)\\{\\s*$")){
+    METHOD(Pattern.compile("^void\\s(.*)\\((.*)\\)\\s*\\{\\s*$")){
+        /** This method is validating a block using OneLineValidator and creates a MethodBlock Object. */
         @Override
         void parseLine(Block block, Iterator<String> strings,String line) throws VariableException, BlockException,OneLinerException {
             Matcher m = getMatcher(line);
@@ -46,13 +48,15 @@ enum LineType {
             VariableParser.createMethodParameters(methodBlock, methodParameters);  // add parameters to method
         }
     },
-    ONELINER(Pattern.compile("^[^/].*;\\s*$")){
+    ONELINER(Pattern.compile("^[^/].*\\s*;\\s*$")){
+        /** This method is validating a line of code using OneLineValidator.*/
         @Override
         void parseLine(Block block, Iterator<String> strings,String line) throws OneLinerException, VariableException {
             OneLineValidator.validateOneLiner(block,line);
         }
     },
     CLOSEBLOCK(Pattern.compile("^\\s*}\\s*$")){
+        /** This method is validating a close block line is not in a global scope.*/
         @Override
         void parseLine(Block block, Iterator<String> strings,String line) throws OneLinerException {
             if (block.isGlobal()) throw new CloseBracketOutsideBlockException();
@@ -63,6 +67,10 @@ enum LineType {
 
     /* A pattern indicative of the value available for the type. */
     private final Pattern pattern;
+
+    /* A pattern used for getBlockLines to identify a general block opening line.*/
+    private static final Pattern openBlock = Pattern.compile("^[.\\s]*\\s*\\{\\s*$");
+
 
     /**
      * Constructor for the enum.
@@ -91,6 +99,7 @@ enum LineType {
 
     /**
      * This method is overridden for some enums. the general case ignores a valid line.
+     * Other cases uses OneLineValidator to validate the format of the line and creates an object if needed.
      * @param block the parent block this line belongs to
      * @param strings the LineParser Iterator of this block
      * @param line string to be currently parsed
@@ -109,13 +118,14 @@ enum LineType {
      * @throws BlockBracketsException
      */
     static LinkedList<String> getBlockLines(Iterator<String> currIterator) throws BlockException {
+
         LinkedList<String> blockStrings = new LinkedList<>();
         int bracketCounter = 1;
         String currLine;
         while(currIterator.hasNext() && bracketCounter > 0){
             currLine = currIterator.next();
             blockStrings.add(currLine);
-            if(currLine.endsWith("{")){
+            if(openBlock.matcher(currLine).matches()){
                 bracketCounter++;
             }
             else if(CLOSEBLOCK.isMatching(currLine)){
