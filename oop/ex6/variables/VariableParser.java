@@ -40,7 +40,7 @@ public abstract class VariableParser {
      * while checking for errors.
      * @param block - the block to update the variables of.
      * @param line - the line to parse.
-     * @throws InvalidVariableInitializationException - if the line is not in format.
+     * @throws InvalidVariableLineException - if the line is not in format.
      * @throws TypeNotFoundException - if the given type is not valid.
      * @throws NewValueNotCompatibleException - if the value given to a variable is not compatible with its type.
      * @throws VariableIsFinalException - if trying to assign a value to a final variable.
@@ -50,7 +50,7 @@ public abstract class VariableParser {
      * @throws VariableAlreadyExistsInScopeException - if declaring a variable that already exists in scope.
      */
     public static void parseVariableLine(Block block, String line)
-            throws InvalidVariableInitializationException, TypeNotFoundException, NewValueNotCompatibleException,
+            throws InvalidVariableLineException, TypeNotFoundException, NewValueNotCompatibleException,
             VariableIsFinalException, VariableDoesntExistException, VariableNotInitializedException,
             FinalVariableNotInitializedException, VariableAlreadyExistsInScopeException {
 
@@ -64,7 +64,7 @@ public abstract class VariableParser {
         else if (setVariableMatcher.find()) assignVariable(block, setVariableMatcher);
 
         // else error
-        else throw new InvalidVariableInitializationException();
+        else throw new InvalidVariableLineException();
     }
 
     /**

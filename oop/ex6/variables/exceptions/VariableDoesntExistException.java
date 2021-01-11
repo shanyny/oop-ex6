@@ -1,8 +1,7 @@
 package oop.ex6.variables.exceptions;
 
 /**
- * An exception that is thrown whenever trying to assign a new value to a none-existent variable or
- * trying to assign a none-existent variable.
+ * An exception that is thrown whenever trying to call a variable which doesn't exist in scope.
  * @author Shany Gindi and Roy Urbach
  */
 public class VariableDoesntExistException extends VariableException {

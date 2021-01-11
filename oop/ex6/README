@@ -60,11 +60,11 @@ TypeNotFoundException.java - thrown when creating a variable of a type which is 
 VariableIsFinalException.java - thrown whenever trying to assign a new value to a final variable.
 IllegalMethodParametersException.java - thrown if a method's parameters are illegal.
 VariableAlreadyExistsInScopeException.java - thrown if a two variables in the same scope have the same name.
-VariableNotInitializedException.java
-InvalidVariableInitializationException.java
-VariableDoesntExistException.java
-NewValueNotCompatibleException.java
-VariableException.java
+VariableNotInitializedException.java - thrown whenever trying to assign a value of an un-initialized variable.
+InvalidVariableLineException.java - thrown if a variable initialization line is not valid.
+VariableDoesntExistException.java - thrown whenever calling a none-existent variable.
+NewValueNotCompatibleException.java - thrown when assigning to a variable a value that is not compatible.
+VariableException.java - abstract exception for variable-based exceptions.
 
 
 =============================
