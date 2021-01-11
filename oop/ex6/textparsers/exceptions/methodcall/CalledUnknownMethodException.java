@@ -1,4 +1,6 @@
-package oop.ex6.textparsers.exceptions;
+package oop.ex6.textparsers.exceptions.methodcall;
+
+import oop.ex6.textparsers.exceptions.methodcall.MethodCallException;
 
 /**
  * This exception is thrown whenever trying to call a method which doesn't exist.

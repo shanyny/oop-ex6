@@ -4,6 +4,11 @@ import oop.ex6.blocks.Block;
 import oop.ex6.blocks.exceptions.ConditionParameterNotBooleanException;
 import oop.ex6.blocks.MethodBlock;
 import oop.ex6.textparsers.exceptions.*;
+import oop.ex6.textparsers.exceptions.methodcall.*;
+import oop.ex6.textparsers.exceptions.methodcreation.MethodAlreadyExistsException;
+import oop.ex6.textparsers.exceptions.methodcreation.MethodCreationException;
+import oop.ex6.textparsers.exceptions.methodcreation.MethodDoesntEndInReturnException;
+import oop.ex6.textparsers.exceptions.methodcreation.MethodNotInMainBlockException;
 import oop.ex6.variables.*;
 import oop.ex6.variables.exceptions.VariableException;
 

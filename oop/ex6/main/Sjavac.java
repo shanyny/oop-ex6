@@ -70,6 +70,7 @@ public abstract class Sjavac {
         }
         int counter = 0;
         for (File test : file.listFiles()) {
+            System.out.println(test.getName());
             int result = runOnOneFile(test);
             Pattern p1 = Pattern.compile("test(\\d+)\\.sjava");
             Pattern p2 = Pattern.compile("test(\\d+)\\.sjava\\s(\\d)\\s.*");
@@ -80,20 +81,32 @@ public abstract class Sjavac {
             m2.matches();
             int filenameNum = Integer.parseInt(m1.group(1));
             int fileLineNum = Integer.parseInt(m2.group(1));
+
+            boolean found = true;
+
             while (filenameNum != fileLineNum) {
+                found = false;
                 counter++;
+                if (counter >= data.size()) break;
                 m2 = p2.matcher(data.get(counter));
-                m2.matches();
-                fileLineNum = Integer.parseInt(m2.group(1));
-
+                found = m2.matches();
+                if (found) {
+                    fileLineNum = Integer.parseInt(m2.group(1));
+                    break;
+                }
             }
-
+            if (!found) {
+                counter = 0;
+                continue;
+            }
             if (Integer.parseInt(m2.group(2)) == result) {
                 System.out.println("pass");
             } else {
                 System.out.println("fail. expected: "+m2.group(2)+" , actual: " +result);
 
             }
+            System.out.println();
+
 
         }
     }

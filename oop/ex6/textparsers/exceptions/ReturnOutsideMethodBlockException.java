@@ -6,7 +6,7 @@ package oop.ex6.textparsers.exceptions;
  */
 public class ReturnOutsideMethodBlockException extends OneLinerException {
     private static final long serialVersionUID = 1L;
-    private static final String MESSAGE = "Tried to return outside of a method block.";
+    private static final String MESSAGE = "A return statement outside of a method block.";
 
     @Override
     public String getMessage() {

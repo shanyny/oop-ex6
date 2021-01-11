@@ -1,4 +1,6 @@
-package oop.ex6.textparsers.exceptions;
+package oop.ex6.textparsers.exceptions.methodcall;
+
+import oop.ex6.textparsers.exceptions.OneLinerException;
 
 /**
  * This exception is abstract and represents all method calls exceptions.

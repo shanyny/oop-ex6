@@ -15,25 +15,25 @@ import java.util.regex.Pattern;
 public abstract class VariableParser {
 
     private static final String FINAL = "final";
-    private static final String VALUE_FORMAT = ".(?:.|\\s)*";// "[\\w\"'\\-\\.\\s]+";
+    private static final String VALUE_FORMAT = ".(?:.|\\s)*";
 
     private static final String SINGLE_VARIABLE_REGEX =
-            String.format("(%s) *(?:= *(%s))?",Variable.getRegex(), VALUE_FORMAT);
+            String.format("(%s)\\s*(?:=\\s*(%s))?",Variable.getRegex(), VALUE_FORMAT);
     private static final String FORMAT =
-            String.format("^(%s +)?(%s) +((?:%s, *)*(?:%s)) *; *$",
+            String.format("^(%s\\s+)?(%s)\\s+((?:%s,\\s*)*(?:%s))\\s*;\\s*$",
                     FINAL, VariableType.getRegex(), SINGLE_VARIABLE_REGEX, SINGLE_VARIABLE_REGEX);
     private static final String SET_VARIABLE_REGEX =
-            String.format("^ *(%s) *= *(%s) *;$",  Variable.getRegex(), VALUE_FORMAT);
+            String.format("^\\s*(%s)\\s*=\\s*(%s)\\s*;$",  Variable.getRegex(), VALUE_FORMAT);
 
     private static final Pattern SINGLE_VARIABLE_PATTERN = Pattern.compile(SINGLE_VARIABLE_REGEX);
     private static final Pattern FULL_PATTERN = Pattern.compile(FORMAT);
     private static final Pattern SET_VARIABLE_PATTERN = Pattern.compile(SET_VARIABLE_REGEX);
 
     private static final String METHOD_PARAMETERS_REGEX =
-            String.format("^(%s) +(%s)$", VariableType.getRegex(), Variable.getRegex());
+            String.format("^(%s)\\s+(%s)$", VariableType.getRegex(), Variable.getRegex());
     private static final Pattern METHOD_PARAMETERS_PATTERN = Pattern.compile(METHOD_PARAMETERS_REGEX);
 
-    private static final String SEPARATOR = " *, *";
+    private static final String SEPARATOR = "\\s*,\\s*";
 
     /**
      * This method receives a Block and a line (string), and updates the block's variable archives,

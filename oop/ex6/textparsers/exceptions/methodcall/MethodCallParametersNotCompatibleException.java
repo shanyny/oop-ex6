@@ -1,4 +1,4 @@
-package oop.ex6.textparsers.exceptions;
+package oop.ex6.textparsers.exceptions.methodcall;
 
 /**
  * This exception is thrown whenever trying to call a method with arguments that don't fit its parameters.

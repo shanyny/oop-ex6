@@ -1,4 +1,4 @@
-package oop.ex6.textparsers.exceptions;
+package oop.ex6.textparsers.exceptions.methodcall;
 
 /**
  * This exception is thrown when calling a method without enough arguments.
