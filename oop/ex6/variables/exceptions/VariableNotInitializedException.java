@@ -6,7 +6,7 @@ package oop.ex6.variables.exceptions;
  * It extends VariableException.
  * @author Shany Gindi and Roy Urbach
  */
-public class VariableNotInitialized extends VariableException {
+public class VariableNotInitializedException extends VariableException {
     private static final long serialVersionUID = 1L;
     private static final String MESSAGE = "Tried to assign an un-initialized variable to a variable.";
 

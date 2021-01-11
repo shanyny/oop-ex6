@@ -1,4 +1,5 @@
 package oop.ex6.blocks;
+import oop.ex6.blocks.exceptions.BlockException;
 import oop.ex6.textparsers.LineParser;
 import oop.ex6.textparsers.exceptions.OneLinerException;
 import oop.ex6.variables.*;
@@ -76,5 +77,13 @@ public abstract class Block {
     public void addMethod(MethodBlock methodBlock) {
         if (methods == null) methods = new HashMap<>();
         methods.put(methodBlock.getName(), methodBlock);
+    }
+
+    public static class LineUnknownFormatException extends BlockException {
+        private static final long serialVersionUID = 1L;
+
+        public LineUnknownFormatException(){
+
+        }
     }
 }

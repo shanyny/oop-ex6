@@ -5,7 +5,7 @@ package oop.ex6.variables.exceptions;
  * trying to assign a none-existent variable.
  * @author Shany Gindi and Roy Urbach
  */
-public class VariableDoesntExist extends VariableException {
+public class VariableDoesntExistException extends VariableException {
     private static final long serialVersionUID = 1L;
     private static final String MESSAGE = "Tried to assign a new value to a variable that doesn't exist " +
             "in scope.";

@@ -6,7 +6,7 @@ package oop.ex6.variables.exceptions;
  * It extends VariableException.
  * @author Shany Gindi and Roy Urbach
  */
-public class NewValueNotCompatible extends VariableException {
+public class NewValueNotCompatibleException extends VariableException {
     private static final long serialVersionUID = 1L;
     private static final String MESSAGE = "Trying to assign to a variable a value which is not compatible " +
             "with its type.";

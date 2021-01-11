@@ -50,12 +50,12 @@ public class Variable {
      */
     public Variable(String name, VariableType type, String value,
                     boolean isFinal, boolean isGlobal)
-            throws NewValueNotCompatible, VariableIsFinal, FinalVariableNotInitialized {
+            throws NewValueNotCompatibleException, VariableIsFinalException, FinalVariableNotInitializedException {
         setVariable(name, type);
         this.isGlobal = isGlobal;
         setValue(value);
         this.isFinal = isFinal;
-        if (isFinal && !isInitialized()) throw new FinalVariableNotInitialized();
+        if (isFinal && !isInitialized()) throw new FinalVariableNotInitializedException();
     }
 
     /**
@@ -68,14 +68,14 @@ public class Variable {
      */
     public Variable(String name, VariableType type, Variable value,
                     boolean isFinal, boolean isGlobal)
-            throws NewValueNotCompatible, VariableIsFinal, VariableNotInitialized,
-            FinalVariableNotInitialized {
+            throws NewValueNotCompatibleException, VariableIsFinalException, VariableNotInitializedException,
+            FinalVariableNotInitializedException {
 
         setVariable(name, type);
         this.isGlobal = isGlobal;
         setValue(value);
         this.isFinal = isFinal;
-        if (isFinal && !isInitialized()) throw new FinalVariableNotInitialized();
+        if (isFinal && !isInitialized()) throw new FinalVariableNotInitializedException();
     }
 
     /**
@@ -93,17 +93,17 @@ public class Variable {
      * Because the wanted program doesn't check for runtime errors, it is not actually changing a value,
      * but it is checking if the types are compatible.
      * @param variable - the variable to change the value to.
-     * @throws VariableNotInitialized - if the variable to change to is not initialized.
-     * @throws VariableIsFinal - if this variable is final (so it cannot be changed).
-     * @throws NewValueNotCompatible - if the values types are not compatible.
+     * @throws VariableNotInitializedException - if the variable to change to is not initialized.
+     * @throws VariableIsFinalException - if this variable is final (so it cannot be changed).
+     * @throws NewValueNotCompatibleException - if the values types are not compatible.
      */
-    public void setValue(Variable variable) throws VariableNotInitialized, VariableIsFinal,
-                                                    NewValueNotCompatible {
+    public void setValue(Variable variable) throws VariableNotInitializedException, VariableIsFinalException,
+            NewValueNotCompatibleException {
         if (variable != null) {
-            if (isFinal) throw new VariableIsFinal();
-            else if (!variable.isInitialized()) throw new VariableNotInitialized();
+            if (isFinal) throw new VariableIsFinalException();
+            else if (!variable.isInitialized()) throw new VariableNotInitializedException();
             else if (getType().canSetTo(variable)) initialize();
-            else throw new NewValueNotCompatible();
+            else throw new NewValueNotCompatibleException();
         }
     }
 
@@ -112,14 +112,14 @@ public class Variable {
      * Because the wanted program doesn't check for runtime errors, it is not actually changing a value,
      * but it is checking if the types are compatible.
      * @param newValue - the value to change this variable's value to, in string form.
-     * @throws VariableIsFinal - if this variable is final (so it cannot be changed).
-     * @throws NewValueNotCompatible - if the values types are not compatible.
+     * @throws VariableIsFinalException - if this variable is final (so it cannot be changed).
+     * @throws NewValueNotCompatibleException - if the values types are not compatible.
      */
-    public void setValue(String newValue) throws NewValueNotCompatible, VariableIsFinal {
+    public void setValue(String newValue) throws NewValueNotCompatibleException, VariableIsFinalException {
         if (newValue != null) {
-            if (isFinal) throw new VariableIsFinal();
+            if (isFinal) throw new VariableIsFinalException();
             else if (getType().canSetTo(newValue)) initialize();
-            else throw new NewValueNotCompatible();
+            else throw new NewValueNotCompatibleException();
         }
     }
 

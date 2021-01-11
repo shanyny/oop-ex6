@@ -5,7 +5,7 @@ package oop.ex6.variables.exceptions;
  * It extends VariableException.
  * @author Shany Gindi and Roy Urbach
  */
-public class VariableIsFinal extends VariableException{
+public class VariableIsFinalException extends VariableException{
     private static final long serialVersionUID = 1L;
     private static final String MESSAGE = "Final variable cannot be assigned after initialization.";
 

@@ -1,10 +1,9 @@
 package oop.ex6.variables;
 
 import oop.ex6.blocks.*;
-import oop.ex6.main.IllegalSJavaCode;
+import oop.ex6.blocks.exceptions.ParameterNameAlreadyExistsException;
 import oop.ex6.variables.exceptions.*;
 
-import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,19 +39,19 @@ public abstract class VariableParser {
      * while checking for errors.
      * @param block - the block to update the variables of.
      * @param line - the line to parse.
-     * @throws InvalidVariableInitialization - if the line is not in format.
+     * @throws InvalidVariableInitializationException - if the line is not in format.
      * @throws TypeNotFoundException - if the given type is not valid.
-     * @throws NewValueNotCompatible - if the value given to a variable is not compatible with its type.
-     * @throws VariableIsFinal - if trying to assign a value to a final variable.
-     * @throws VariableDoesntExist - if trying to assign a variable that doesn't exist to a variable.
-     * @throws VariableNotInitialized - if trying to assign a not-initialized variable to a variable.
-     * @throws FinalVariableNotInitialized - if trying to declare a final variable without initializing it.
-     * @throws VariableAlreadyExistsInScope - if declaring a variable that already exists in scope.
+     * @throws NewValueNotCompatibleException - if the value given to a variable is not compatible with its type.
+     * @throws VariableIsFinalException - if trying to assign a value to a final variable.
+     * @throws VariableDoesntExistException - if trying to assign a variable that doesn't exist to a variable.
+     * @throws VariableNotInitializedException - if trying to assign a not-initialized variable to a variable.
+     * @throws FinalVariableNotInitializedException - if trying to declare a final variable without initializing it.
+     * @throws VariableAlreadyExistsInScopeException - if declaring a variable that already exists in scope.
      */
     public static void parseVariableLine(Block block, String line)
-            throws InvalidVariableInitialization, TypeNotFoundException, NewValueNotCompatible,
-            VariableIsFinal, VariableDoesntExist, VariableNotInitialized,
-            FinalVariableNotInitialized, VariableAlreadyExistsInScope {
+            throws InvalidVariableInitializationException, TypeNotFoundException, NewValueNotCompatibleException,
+            VariableIsFinalException, VariableDoesntExistException, VariableNotInitializedException,
+            FinalVariableNotInitializedException, VariableAlreadyExistsInScopeException {
 
         Matcher initializingMatcher = FULL_PATTERN.matcher(line);
         Matcher setVariableMatcher = SET_VARIABLE_PATTERN.matcher(line);
@@ -64,7 +63,7 @@ public abstract class VariableParser {
         else if (setVariableMatcher.find()) assignVariable(block, setVariableMatcher);
 
         // else error
-        else throw new InvalidVariableInitialization();
+        else throw new InvalidVariableInitializationException();
     }
 
     /**
@@ -72,15 +71,15 @@ public abstract class VariableParser {
      * @param block - the block to add the variables to.
      * @param matcher - the matcher that holds the variable's strings.
      * @throws TypeNotFoundException - if the given type is not valid.
-     * @throws NewValueNotCompatible - if the value given to a variable is not compatible with its type.
-     * @throws VariableIsFinal - if trying to assign a value to a final variable.
-     * @throws VariableNotInitialized - if trying to assign a not-initialized variable to a variable.
-     * @throws FinalVariableNotInitialized - if trying to declare a final variable without initializing it.
-     * @throws VariableAlreadyExistsInScope - if declaring a variable that already exists in scope.
+     * @throws NewValueNotCompatibleException - if the value given to a variable is not compatible with its type.
+     * @throws VariableIsFinalException - if trying to assign a value to a final variable.
+     * @throws VariableNotInitializedException - if trying to assign a not-initialized variable to a variable.
+     * @throws FinalVariableNotInitializedException - if trying to declare a final variable without initializing it.
+     * @throws VariableAlreadyExistsInScopeException - if declaring a variable that already exists in scope.
      */
     private static void initializeVariablesParser(Block block, Matcher matcher)
-            throws TypeNotFoundException, NewValueNotCompatible, VariableIsFinal,
-            VariableNotInitialized, FinalVariableNotInitialized, VariableAlreadyExistsInScope {
+            throws TypeNotFoundException, NewValueNotCompatibleException, VariableIsFinalException,
+            VariableNotInitializedException, FinalVariableNotInitializedException, VariableAlreadyExistsInScopeException {
         boolean isFinal = matcher.group(1) != null;  // are the variables declared final
         VariableType variableType = VariableType.getType(matcher.group(2));  // the variables' type.
 
@@ -92,7 +91,7 @@ public abstract class VariableParser {
 
             // if the variable already exists in scope and is not global
             Variable variable = block.getVariable(varName, true);
-            if (variable != null && !variable.isGlobal()) throw new VariableAlreadyExistsInScope();
+            if (variable != null && !variable.isGlobal()) throw new VariableAlreadyExistsInScopeException();
 
             String valueStr = singleVariableMatcher.group(2);  // the value of the variable to assign
             createVariable(block, varName, variableType, valueStr, isFinal, false);
@@ -103,19 +102,19 @@ public abstract class VariableParser {
      * This method assigns a new value to a variable.
      * @param block - the block to add the variables to.
      * @param matcher - the matcher that holds the variable's strings.
-     * @throws NewValueNotCompatible - if the value given to a variable is not compatible with its type.
-     * @throws VariableIsFinal - if trying to assign a value to a final variable.
-     * @throws VariableNotInitialized - if trying to assign a not-initialized variable to a variable.
-     * @throws FinalVariableNotInitialized - if trying to declare a final variable without initializing it.
-     * @throws VariableDoesntExist - if trying to assign a variable that doesn't exist to a variable.
+     * @throws NewValueNotCompatibleException - if the value given to a variable is not compatible with its type.
+     * @throws VariableIsFinalException - if trying to assign a value to a final variable.
+     * @throws VariableNotInitializedException - if trying to assign a not-initialized variable to a variable.
+     * @throws FinalVariableNotInitializedException - if trying to declare a final variable without initializing it.
+     * @throws VariableDoesntExistException - if trying to assign a variable that doesn't exist to a variable.
      */
     private static void assignVariable(Block block, Matcher matcher)
-            throws VariableDoesntExist, VariableIsFinal, NewValueNotCompatible, VariableNotInitialized,
-            FinalVariableNotInitialized {
+            throws VariableDoesntExistException, VariableIsFinalException, NewValueNotCompatibleException, VariableNotInitializedException,
+            FinalVariableNotInitializedException {
         String varName = matcher.group(1);
 
         Variable var = block.getVariable(varName, false);
-        if (var == null) throw new VariableDoesntExist();  // if the variable isn't in any parent scope
+        if (var == null) throw new VariableDoesntExistException();  // if the variable isn't in any parent scope
 
         String valueStr = matcher.group(2);
 
@@ -138,15 +137,15 @@ public abstract class VariableParser {
      * @param value - the value of the new variable (null if not initialized). Can be a variable's name.
      * @param isFinal - is the variable final.
      * @param isGlobal - if the variable global.
-     * @throws NewValueNotCompatible - if the value given to a variable is not compatible with its type.
-     * @throws VariableIsFinal - if trying to assign a value to a final variable.
-     * @throws FinalVariableNotInitialized - if trying to declare a final variable without initializing it.
-     * @throws VariableNotInitialized - if trying to assign a not-initialized variable to a variable.
+     * @throws NewValueNotCompatibleException - if the value given to a variable is not compatible with its type.
+     * @throws VariableIsFinalException - if trying to assign a value to a final variable.
+     * @throws FinalVariableNotInitializedException - if trying to declare a final variable without initializing it.
+     * @throws VariableNotInitializedException - if trying to assign a not-initialized variable to a variable.
      */
     private static void createVariable(Block block, String name, VariableType type, String value,
                                        boolean isFinal, boolean isGlobal)
-            throws NewValueNotCompatible, VariableIsFinal,
-            FinalVariableNotInitialized, VariableNotInitialized {
+            throws NewValueNotCompatibleException, VariableIsFinalException,
+            FinalVariableNotInitializedException, VariableNotInitializedException {
 
         if (value != null) {
             Variable valueVar = block.getVariable(value, false);
@@ -164,15 +163,15 @@ public abstract class VariableParser {
      * This method adds to a method block its parameters based in the given line.
      * @param methodBlock - the MethodBlock to add parameters to.
      * @param line - the line that includes the parameters.
-     * @throws IllegalMethodParameters - if the line is not in format of "VariableType Variable, ..."
+     * @throws IllegalMethodParametersException - if the line is not in format of "VariableType Variable, ..."
      * @throws TypeNotFoundException - if the type is not supported by SJava.
      */
     public static void createMethodParameters(MethodBlock methodBlock, String line)
-            throws IllegalMethodParameters, TypeNotFoundException, ParameterNameAlreadyExistsException {
+            throws IllegalMethodParametersException, TypeNotFoundException, ParameterNameAlreadyExistsException {
 
         for (String str : line.split(SEPARATOR)) {
             Matcher matcher = METHOD_PARAMETERS_PATTERN.matcher(str);
-            if (!matcher.find()) throw new IllegalMethodParameters();
+            if (!matcher.find()) throw new IllegalMethodParametersException();
             String variableName = matcher.group(1);
             VariableType variableType = VariableType.getType(matcher.group(2));
 

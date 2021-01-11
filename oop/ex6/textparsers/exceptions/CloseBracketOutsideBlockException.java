@@ -1,14 +1,12 @@
 package oop.ex6.textparsers.exceptions;
 
-import oop.ex6.blocks.exceptions.BlockException;
-
 /**
  * This exception is abstract and represents all method calls exceptions.
  * @author Shany Gindi and Roy Urbach
  */
-public class ConditionInMainBlockException extends BlockException {
+public class CloseBracketOutsideBlockException extends OneLinerException {
     private static final long serialVersionUID = 1L;
-    private static final String MESSAGE = "Tried to open a condition block in the main block of the program.";
+    private static final String MESSAGE = "Tried to close a block out of block context.";
 
     @Override
     public String getMessage() {

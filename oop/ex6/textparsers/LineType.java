@@ -1,6 +1,8 @@
 package oop.ex6.textparsers;
 
 import oop.ex6.blocks.*;
+import oop.ex6.blocks.exceptions.BlockBracketsException;
+import oop.ex6.blocks.exceptions.BlockException;
 import oop.ex6.textparsers.exceptions.*;
 import oop.ex6.variables.VariableParser;
 import oop.ex6.variables.exceptions.*;
@@ -50,7 +52,12 @@ enum LineType {
             OneLineValidator.validateOneLiner(block,line);
         }
     },
-    CLOSEBLOCK(Pattern.compile("^\\s*}\\s*$"));
+    CLOSEBLOCK(Pattern.compile("^\\s*}\\s*$")){
+        @Override
+        void parseLine(Block block, Iterator<String> strings,String line) throws OneLinerException {
+            if (block.isGlobal()) throw new CloseBracketOutsideBlockException();
+        }
+    };
 //    RETURN(Pattern.compile("^\\s*return\\s*;\\s*$"));
 
 

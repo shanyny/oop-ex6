@@ -1,7 +1,7 @@
 package oop.ex6.textparsers;
 
 import oop.ex6.blocks.Block;
-import oop.ex6.blocks.ConditionParameterNotBoolean;
+import oop.ex6.blocks.exceptions.ConditionParameterNotBooleanException;
 import oop.ex6.blocks.MethodBlock;
 import oop.ex6.textparsers.exceptions.*;
 import oop.ex6.variables.*;
@@ -42,7 +42,7 @@ public abstract class OneLineValidator {
         if (methodCallMatcher.find()) {
             if (scope.isGlobal()) throw new MethodCallInMainBlockException();
             MethodBlock methodBlock = scope.getMethod(methodCallMatcher.group(1));
-            if (methodBlock == null) throw new CalledUnknownMethod();
+            if (methodBlock == null) throw new CalledUnknownMethodException();
             else checkCallMethod(scope, methodBlock, methodCallMatcher.group(2));
         } else if (methodReturnMatcher.matches() && (scope.isGlobal())){
             throw new ReturnOutsideMethodBlockException();
@@ -55,12 +55,12 @@ public abstract class OneLineValidator {
      * @param scope - the scope to look at.
      * @param method - the method to check.
      * @param argumentStr - the arguments in one string.
-     * @throws MethodCallParametersNotCompatible - if the the arguments don't fit the method's parameters.
-     * @throws TooLittleArguments - if there are too little arguments.
-     * @throws TooManyArguments - if there are too many arguments.
+     * @throws MethodCallParametersNotCompatibleException - if the the arguments don't fit the method's parameters.
+     * @throws TooLittleArgumentsException - if there are too little arguments.
+     * @throws TooManyArgumentsException - if there are too many arguments.
      */
     private static void checkCallMethod(Block scope, MethodBlock method, String argumentStr)
-            throws MethodCallParametersNotCompatible, TooLittleArguments, TooManyArguments {
+            throws MethodCallParametersNotCompatibleException, TooLittleArgumentsException, TooManyArgumentsException {
         LinkedList<Variable> parameters = method.getParameters();
         String[] arguments =  argumentStr.split(CALL_METHOD_SEPARATOR);
         int i = 0;
@@ -71,9 +71,9 @@ public abstract class OneLineValidator {
                 if (argVar != null) parameter.setValue(argVar);
                 else parameter.setValue(argument);
             }
-        } catch (VariableException e) {throw new MethodCallParametersNotCompatible();}
-        catch (ArrayIndexOutOfBoundsException e) {throw new TooLittleArguments();}
-        if (i != arguments.length) throw new TooManyArguments();
+        } catch (VariableException e) {throw new MethodCallParametersNotCompatibleException();}
+        catch (ArrayIndexOutOfBoundsException e) {throw new TooLittleArgumentsException();}
+        if (i != arguments.length) throw new TooManyArgumentsException();
     }
 
     /**
@@ -89,9 +89,9 @@ public abstract class OneLineValidator {
 
     /**
      * This method validates the condition of the ConditionalBlock.
-     * @throws ConditionParameterNotBoolean - if parameters are not boolean.
+     * @throws ConditionParameterNotBooleanException - if parameters are not boolean.
      */
-    public static void validateCondition(Block scope, String condition) throws ConditionParameterNotBoolean {
+    public static void validateCondition(Block scope, String condition) throws ConditionParameterNotBooleanException {
         try {
             Variable checkBoolean = new Variable("checkBoolean", VariableType.BOOLEAN);
             for (String str : condition.split(CONDITION_SEPARATOR)) {
@@ -99,6 +99,6 @@ public abstract class OneLineValidator {
                 if (variable == null) checkBoolean.setValue(str);
                 else checkBoolean.setValue(variable);
             }
-        } catch (VariableException e) {throw new ConditionParameterNotBoolean();}
+        } catch (VariableException e) {throw new ConditionParameterNotBooleanException();}
     }
 }

@@ -1,5 +1,7 @@
 package oop.ex6.blocks;
 
+import oop.ex6.blocks.exceptions.BlockException;
+import oop.ex6.blocks.exceptions.ParameterNameAlreadyExistsException;
 import oop.ex6.textparsers.exceptions.OneLinerException;
 import oop.ex6.variables.Variable;
 import oop.ex6.variables.exceptions.VariableException;

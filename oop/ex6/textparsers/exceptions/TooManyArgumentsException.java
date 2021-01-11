@@ -4,7 +4,7 @@ package oop.ex6.textparsers.exceptions;
  * This exception is thrown when calling a method with too many arguments.
  * @author Shany Gindi and Roy Urbach
  */
-public class TooManyArguments extends MethodCallException {
+public class TooManyArgumentsException extends MethodCallException {
     private static final long serialVersionUID = 1L;
     private static final String MESSAGE = "Tried to call a method with more arguments than its parameters.";
 
