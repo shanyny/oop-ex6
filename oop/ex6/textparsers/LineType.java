@@ -1,7 +1,7 @@
 package oop.ex6.textparsers;
 
 import oop.ex6.blocks.*;
-import oop.ex6.blocks.exceptions.BlockBracketsException;
+import oop.ex6.textparsers.exceptions.BlockBracketsException;
 import oop.ex6.blocks.exceptions.BlockException;
 import oop.ex6.textparsers.exceptions.*;
 import oop.ex6.variables.VariableParser;

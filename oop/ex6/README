@@ -1,0 +1,70 @@
+shanygi
+yabanzik
+
+=============================
+=      File description     =
+=============================
+
+package oop.ex6.blocks:
+Block.java
+ConditionalBlock.java
+MainBlock.java
+MethodBlock.java
+
+package oop.ex6.blocks.exceptions:
+BlockException.java
+ConditionParameterNotBooleanException.java
+ParameterNameAlreadyExistsException.java
+
+package oop.ex6.main:
+FileReader.java
+IllegalSJavaCode.java
+Sjavac.java
+
+package oop.ex6.textparsers:
+LineParser.java
+LineType.java
+OneLineValidator.java
+
+package oop.ex6.textparsers.exceptions:
+BlockBracketsException.java
+MethodCallException.java
+MethodNotInMainBlockException.java
+CalledUnknownMethodException.java
+MethodCallInMainBlockException.java
+OneLinerException.java
+CloseBracketOutsideBlockException.java
+MethodCallParametersNotCompatibleException.java ReturnOutsideMethodBlockException.java
+ConditionInMainBlockException.java
+MethodCreationException.java
+TooLittleArgumentsException.java
+MethodAlreadyExistsException.java
+MethodDoesntEndInReturnException.java
+TooManyArgumentsException.java
+
+package oop.ex6.variables:
+Variable.java
+VariableParser.java
+VariableType.java
+
+package oop.ex6.variables.exceptions:
+FinalVariableNotInitializedException.java
+TypeNotFoundException.java
+VariableIsFinalException.java
+IllegalMethodParametersException.java
+VariableAlreadyExistsInScopeException.java
+VariableNotInitializedException.java
+InvalidVariableInitializationException.java
+VariableDoesntExistException.java
+NewValueNotCompatibleException.java
+VariableException.java
+
+
+=============================
+=          Design           =
+=============================
+
+
+=============================
+=  Implementation details   =
+=============================
