@@ -18,8 +18,10 @@ import java.util.regex.Pattern;
  */
 
 enum LineType {
+
     COMMENT(Pattern.compile("^/{2}[.\\s]*")),
     EMPTY(Pattern.compile("^\\s*$")),
+
     CONDITION(Pattern.compile("^(?:if|while)\\((.*)\\)\\s*\\{\\s*$")){
         /** This method is validating a condition using OneLineValidator and creates a ConditionalBlock Object. */
         @Override
@@ -61,8 +63,14 @@ enum LineType {
         void parseLine(Block block, Iterator<String> strings,String line) throws OneLinerException {
             if (block.isGlobal()) throw new CloseBracketOutsideBlockException();
         }
+    },
+    RETURN(Pattern.compile("^\\s*return\\s*;\\s*$")){
+        /** This method is validating a return statement line is not in a global scope.*/
+        @Override
+        void parseLine(Block block, Iterator<String> strings,String line) throws OneLinerException {
+            if (block.isGlobal()) throw new ReturnOutsideMethodBlockException();
+        }
     };
-//    RETURN(Pattern.compile("^\\s*return\\s*;\\s*$"));
 
 
     /* The number of brackets the count starts from is 1 because the open block isn't counted */

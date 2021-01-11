@@ -36,6 +36,9 @@ public abstract class OneLineValidator {
     /* A regex for the separator of parameters given to a method*/
     private static final String CONDITION_SEPARATOR = "\\s*\\|{2}|&&\\s*";
 
+    /* An int used for accessing the second line from the end of a block */
+    public static final int SECOND_LINE_FROM_THE_END_OF_BLOCK = 2;
+
 
     /**
      * This method checks if a single line is alright.
@@ -95,7 +98,7 @@ public abstract class OneLineValidator {
     public static void validateMethodDeclaration(Block block, LinkedList<String> blockLines, String methodName) throws MethodCreationException {
         if (!block.isGlobal()){throw new MethodNotInMainBlockException();}
         if (block.getMethod(methodName) != null) {throw new MethodAlreadyExistsException();}
-        if (!blockLines.get(blockLines.size()-2).equals("return;")){throw new MethodDoesntEndInReturnException();}
+        if (!blockLines.get(blockLines.size()- SECOND_LINE_FROM_THE_END_OF_BLOCK).equals("return;")){throw new MethodDoesntEndInReturnException();}
     }
 
     /**
