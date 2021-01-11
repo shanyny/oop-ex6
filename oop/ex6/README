@@ -70,8 +70,70 @@ VariableException.java - abstract exception for variable-based exceptions.
 =============================
 =          Design           =
 =============================
-
+Sjavac is the main class running the whole program. the program is parsing (using different textparsers) a Sjava program textual file into
+block elements that each has a unique memory scope that contains local variables and/or methods. There are 3 block types
+that inherit from Block class and each is implementing a different type of scope properties. MainBlock is the global
+scope of the program and all other scopes are of MethodBlock or ConditionalBlock type. Each block holds the different
+blocks inside its scope and a pointer to its parent scope. that way, when searching for a variable or a method,
+each block can search for it in its own scope or recursively upwards.
+All Block type classes have a validate method that is in charge of iterating over the block's text and checking if it
+is a legal Sjava code. validation is done using the text parsers LineParser, LineType and OneLineValidator
+and recursively calling validate for all sub blocks in the scope. LineParser is a static class that iterates through
+each line in a block and classifies each line using the LineType enum. LineType is implementing the single choice
+principle as the only place blocks are created in the program. LineType's parseLine method is implemented differently
+for each known line type. Using OneLineValidator and its different static methods, parseLine is handling validation
+and creation of a block or a single line of code (method call or variable actions).
+As for variables, all parsing is done by VariableParser which differentiates between initialization and assignment of
+variables. Then the VariableParser creates a new instance of Variable with the appropriate VariableType (enum) which
+implements the single choice principle. Each variable declared in the code is assigned a Variable class instance and
+is added to the block of the relevant scope. Variables can be final or global. VariableParser is also handling method
+parameters and creates initialized variables in each method according to its required parameters.
+Exceptions will be explained in the next section.
 
 =============================
 =  Implementation details   =
 =============================
+
+MethodBlocks and Variables are saved in HashMaps with the name of each object as the key and the object as value.
+The only classes that can be instantiated are Blocks and Variables. All other classes are abstract and consists
+of static methods only.
+All Sjava restrictions are enforced by the textparsers and scope related restrictions are enforced specifically in
+OneLineValidator.
+
+### Error Handling: ###
+All Exceptions inherit from IllegalSJavaCodeException. There are 3 main exception families: BlockExceptions,
+VariableExceptions and OneLinerException. BlockExceptions are thrown under the blocks package and textparsers package.
+VariableExceptions are thrown under the variables package only, and OneLineExceptions are thrown under the textparsers
+package only. Under OneLinerExceptions we have MethodCallExceptions and MethodCreationExceptions. Each Exception we
+made has a unique indicative message, which is printed by the main func in Sjavac, indicating what the error was when
+validating the code.
+
+### Modularity and adding new features: ###
+By using an enum as a VariableType representation, adding new types of variable is simply done by adding new enum
+instances. Also, in the current program we don't keep the value of each Variable, so by adding a "value" field to the
+Variable class and just a single line of code to the setValue method we can implement this functionality.
+The Block class is an abstract class representing the general form of a block of code in a program. it consists of
+add/get method/variable methods that allow modularity for implementing methods in all block types.
+If we want to add a Class type object to Sjava's features, it can be easily done by adding a class inheriting from
+MainBlock which already implements the essential features of a Class, and adding a class archive to each block (similar
+to methods and variables).
+In the way we archive the methods and variables it is easy to add nested methods (and classes if need be).
+
+Different methods' types like different return values can be implemented by adding a single field parameter called
+returnValue in MethodBlock class, holding a VariableType. when validating a method, all return statements will be
+validated to return the appropriate type of variable and method calls will be validated for storing a returned value
+in the appropriate type of variable.
+
+### Regular Expressions: ###
+^\\s*void\\s*(\\S+)\\s*\\((.*)\\)\\s*\\{\\s*$
+This regex is used to catch a method declaration.
+^\\s*void\\s* - states that the line should start with the word "void" (ignoring spaces on both sides)
+(\\S+)\\s* - is catching in group 1 the method name which generally mustn't contain spaces (ignoring spaces).
+\\((.*)\\) - is catching in group 2 all of the parameters of the method.
+\\s*\\{\\s*$ - states that the line should end with a { bracket (ignoring spaces on both sides).
+
+(?:[a-zA-Z]|(?:_\w))\w*
+This regex is used to enforce variable names
+[a-zA-Z]|(?:_\w) - the first letter of the name must be a lower or upper case letter OR (|) it can be
+ an underscore followed by a letter.
+\w* - all other characters in the name can be letters, digits or underscore.

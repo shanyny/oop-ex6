@@ -29,7 +29,7 @@ enum LineType {
             Matcher matcher = getMatcher(line);
             matcher.matches();
             String condition = matcher.group(1);
-            LinkedList<String> blockLines = getBlockLines(strings);
+            LinkedList<String> blockLines = LineParser.getBlockLines(strings);
             OneLineValidator.validateCondition(block, condition);
             new ConditionalBlock(block, blockLines);
         }
@@ -43,7 +43,7 @@ enum LineType {
             m.matches();
             String methodName = m.group(1);
             String methodParameters = m.group(2);
-            LinkedList<String> blockLines = getBlockLines(strings);
+            LinkedList<String> blockLines = LineParser.getBlockLines(strings);
 
             OneLineValidator.validateMethodDeclaration(block, blockLines, methodName);
 
@@ -75,18 +75,8 @@ enum LineType {
         }
     };
 
-
-    /* The number of brackets the count starts from is 1 because the open block isn't counted */
-    private static final int BRACKET_COUNTER_STARTING_VALUE = 1;
-
-    /* The number of brackets that indicate a valid block is found */
-    private static final int NUM_OF_BRACKETS_END_OF_ITERATION = 0;
-
     /* A pattern indicative of the value available for the type. */
     private final Pattern pattern;
-
-    /* A pattern used for getBlockLines to identify a general block opening line.*/
-    private static final Pattern OPEN_BLOCK = Pattern.compile("^.*\\s*\\{\\s*$");
 
 
     /**
@@ -126,30 +116,6 @@ enum LineType {
      */
     void parseLine(Block block, Iterator<String> strings,String line)
             throws BlockException, VariableException, OneLinerException {
-    }
-
-
-    /**
-     * This method is validating a block structure and returns it's content
-     * @param currIterator line iterator to run on
-     * @return LinkedList of oop.ex6.lines in the block
-     * @throws BlockBracketsException - if reached the end of the program without closing bracket.
-     */
-    static LinkedList<String> getBlockLines(Iterator<String> currIterator) throws BlockBracketsException {
-
-        LinkedList<String> blockStrings = new LinkedList<>();
-        int bracketCounter = BRACKET_COUNTER_STARTING_VALUE;
-        String currLine;
-        while(currIterator.hasNext() && bracketCounter > NUM_OF_BRACKETS_END_OF_ITERATION){
-            currLine = currIterator.next();
-            blockStrings.add(currLine);
-
-            if (OPEN_BLOCK.matcher(currLine).matches()) bracketCounter++;
-            else if (CLOSEBLOCK.isMatching(currLine)) bracketCounter--;
-        }
-        if(bracketCounter > NUM_OF_BRACKETS_END_OF_ITERATION) throw new BlockBracketsException();
-
-        return blockStrings;
     }
 
 }

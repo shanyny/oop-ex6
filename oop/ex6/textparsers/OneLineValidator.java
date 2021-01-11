@@ -58,17 +58,14 @@ abstract class OneLineValidator {
      * @throws VariableException - problem with initializing or assigning variables.
      */
     public static void validateOneLiner(Block scope, String line)
-            throws MethodCallException, VariableException, ReturnOutsideMethodBlockException {
+            throws MethodCallException, VariableException {
         Matcher methodCallMatcher = METHOD_CALL_PATTERN.matcher(line);
-        Matcher methodReturnMatcher = METHOD_RETURN_PATTERN.matcher(line);
 
         if (methodCallMatcher.find()) {
             if (scope.isGlobal()) throw new MethodCallInMainBlockException();
             MethodBlock methodBlock = scope.getMethod(methodCallMatcher.group(1));
             if (methodBlock == null) throw new CalledUnknownMethodException();
             else checkCallMethod(scope, methodBlock, methodCallMatcher.group(2));
-        } else if (methodReturnMatcher.matches() && (scope.isGlobal())){
-            throw new ReturnOutsideMethodBlockException();
         }else VariableParser.parseVariableLine(scope, line);
 
     }
