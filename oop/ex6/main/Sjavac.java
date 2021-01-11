@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 //********DELETE THESE IMPORTS**********
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -69,44 +70,58 @@ public abstract class Sjavac {
             data.add(scanner.nextLine());
         }
         int counter = 0;
-        for (File test : file.listFiles()) {
-            System.out.println(test.getName());
-            int result = runOnOneFile(test);
-            Pattern p1 = Pattern.compile("test(\\d+)\\.sjava");
-            Pattern p2 = Pattern.compile("test(\\d+)\\.sjava\\s(\\d)\\s.*");
 
-            Matcher m2 = p2.matcher(data.get(counter));
+        File[] sorted = file.listFiles();
+        Arrays.sort(sorted);
+        Pattern p1 = Pattern.compile("^test(\\d+)\\.sjava$");
+
+        for (File test : sorted) {
             Matcher m1 = p1.matcher(test.getName());
             m1.matches();
-            m2.matches();
-            int filenameNum = Integer.parseInt(m1.group(1));
-            int fileLineNum = Integer.parseInt(m2.group(1));
+//            int filenameNum = Integer.parseInt(m1.group(1));
 
-            boolean found = true;
+            Pattern p2 = Pattern.compile(String.format("^test%s\\.sjava\\s(\\d)\\s(.*)$",m1.group(1)));
 
-            while (filenameNum != fileLineNum) {
-                found = false;
+            Matcher m2 = p2.matcher(data.get(counter));
+
+            while (!m2.matches() && counter<data.size()-1){
                 counter++;
-                if (counter >= data.size()) break;
                 m2 = p2.matcher(data.get(counter));
-                found = m2.matches();
-                if (found) {
-                    fileLineNum = Integer.parseInt(m2.group(1));
-                    break;
+            }
+//            int fileLineNum = Integer.parseInt(m2.group(1));
+
+//            boolean found = true;
+
+//            while (filenameNum != fileLineNum) {
+//                found = false;
+//                counter++;
+//                if (counter >= data.size()) break;
+//                m2 = p2.matcher(data.get(counter));
+//                found = m2.matches();
+//                if (found) {
+//                    fileLineNum = Integer.parseInt(m2.group(1));
+//                }
+//            }
+            if (m2.matches()) {
+                System.out.println(test.getName());
+                int result = runOnOneFile(test);
+
+//                System.out.println(" test file line catched: "+m1.group(1)+" file name: filenameNum");
+//                System.out.println(filenameNum);
+
+                if (Integer.parseInt(m2.group(1)) == result) {
+                    System.out.println("pass");
+                    System.out.println("Their excuse: "+m2.group(2));
+
+                } else {
+                    System.out.println("fail. expected: "+m2.group(1)+" , actual: " +result);
+                    System.out.println(m2.group(2));
+
                 }
-            }
-            if (!found) {
+                System.out.println();
+            }else{
                 counter = 0;
-                continue;
             }
-            if (Integer.parseInt(m2.group(2)) == result) {
-                System.out.println("pass");
-            } else {
-                System.out.println("fail. expected: "+m2.group(2)+" , actual: " +result);
-
-            }
-            System.out.println();
-
 
         }
     }
