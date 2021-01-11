@@ -7,19 +7,42 @@ import oop.ex6.variables.exceptions.VariableException;
 
 import java.util.HashMap;
 
-
+/**
+ * This class is an abstract form of a general block of code in sjava files. this block consists of few
+ * essentials that blocks have in java like variables and methods that belong to this block's memory space.
+ * each block has a validate method and add/get variables/methods methods.
+ */
 public abstract class Block {
 
+    /* HashMap containing this block's variables */
     private final HashMap<String, Variable> variables = new HashMap<>();
+
+    /* HashMap containing this block's methods, initialized only if main block. */
     private HashMap<String, MethodBlock> methods;
+
+    /* An Iterable of Strings containing this block's textual code. */
     public final Iterable<String> strings;
+
+    /* Block object of the upper scope */
     private final Block parent;
 
-    public Block(Block parent, Iterable<String> strings) throws BlockException, VariableException, OneLinerException {
+    /**
+     * A simple constructor initializing this block's parent block and the string literals.
+     * @param parent block object of upper scope block
+     * @param strings iterable of the textual lines in the block
+     */
+    public Block(Block parent, Iterable<String> strings) {
         this.parent = parent;
         this.strings = strings;
     }
 
+    /**
+     * This method is using LineParser to validate each line in the textual context of the current block
+     * and all method blocks in this block's scope.
+     * @throws BlockException - general exception regarding block errors
+     * @throws VariableException - general exception regarding variable errors
+     * @throws OneLinerException - general exception regarding one liner command errors
+     */
     protected void validate() throws BlockException, VariableException, OneLinerException {
         LineParser.parse(this, strings);
         if (methods != null) {
@@ -79,11 +102,4 @@ public abstract class Block {
         methods.put(methodBlock.getName(), methodBlock);
     }
 
-    public static class LineUnknownFormatException extends BlockException {
-        private static final long serialVersionUID = 1L;
-
-        public LineUnknownFormatException(){
-
-        }
-    }
 }

@@ -4,8 +4,11 @@ import oop.ex6.blocks.MainBlock;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+//********DELETE THESE IMPORTS**********
 import java.util.LinkedList;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class is an abstract class with a single method (main), which receives a filename and declares it
@@ -67,7 +70,7 @@ public abstract class Sjavac {
         }
         int counter = 0;
         for (File test : file.listFiles()) {
-            String result = runOnOneFile(test);
+            int result = runOnOneFile(test);
             Pattern p1 = Pattern.compile("test(\\d+)\\.sjava");
             Pattern p2 = Pattern.compile("test(\\d+)\\.sjava\\s(\\d)\\s.*");
 
@@ -79,35 +82,40 @@ public abstract class Sjavac {
             int fileLineNum = Integer.parseInt(m2.group(1));
             while (filenameNum != fileLineNum) {
                 counter++;
+                m2 = p2.matcher(data.get(counter));
+                m2.matches();
+                fileLineNum = Integer.parseInt(m2.group(1));
+
             }
 
-            if (m2.group(2) == result) {
+            if (Integer.parseInt(m2.group(2)) == result) {
                 System.out.println("pass");
             } else {
-                System.out.println("fail");
+                System.out.println("fail. expected: "+m2.group(2)+" , actual: " +result);
+
             }
 
         }
     }
-    public static String runOnOneFile(File test){
+    public static int runOnOneFile(File test){
 
             Iterable<String> sJavaScript;
             try {
                 sJavaScript = FileReader.getString(test);  // change to file
             } catch (IOException e) {
-                System.out.println(IO_PROBLEM);
+//                System.out.println(IO_PROBLEM);
                 System.out.println(IO_PROBLEM_MESSAGE);
-                return IO_PROBLEM;
+                return 2;
             }
 
             try {
                 new MainBlock(sJavaScript);  // do the actual test
-            } catch (IllegalSJavaCode e) {
-                System.out.println(CODE_IS_ILLEGAL);
+            } catch (IllegalSJavaCodeException e) {
+//                System.out.println(CODE_IS_ILLEGAL);
                 System.out.println(e.getMessage());
-                return CODE_IS_ILLEGAL;
+                return 1;
             }
 
-            return CODE_IS_LEGAL;
+            return 0;
         }
 }

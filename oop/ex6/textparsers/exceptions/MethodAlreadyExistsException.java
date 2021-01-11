@@ -1,7 +1,5 @@
 package oop.ex6.textparsers.exceptions;
 
-import oop.ex6.main.IllegalSJavaCode;
-
 /**
  * This exception is abstract and represents all method calls exceptions.
  * @author Shany Gindi and Roy Urbach
