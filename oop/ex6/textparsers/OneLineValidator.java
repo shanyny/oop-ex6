@@ -18,12 +18,23 @@ import java.util.regex.Pattern;
  */
 public abstract class OneLineValidator {
 
-    private final static String METHOD_CALL_FORMAT = "^(\\w+)\\((.*)\\);$";
-    private final static Pattern METHOD_CALL_PATTERN = Pattern.compile(METHOD_CALL_FORMAT);
-    private final static Pattern METHOD_RETURN_PATTERN = Pattern.compile("^\\s*return\\s*;\\s*$");
+    /* A regex string representing a simple method call*/
+    private final static String METHOD_CALL_FORMAT = "^(\\w+)\\((.*)\\)\\s*;\\s*$";
 
-    private static final String CALL_METHOD_SEPARATOR = " *, *";
-    private static final String CONDITION_SEPARATOR = " *\\|{2}|&& *";
+    /* A pattern for a method call */
+    private final static Pattern METHOD_CALL_PATTERN = Pattern.compile(METHOD_CALL_FORMAT);
+
+    /* A regex string representing a simple return that must be found at the end of a method.*/
+    public static final String METHOD_RETURN_FORMAT = "^\\s*return\\s*;\\s*$";
+
+    /* A pattern for a return statement */
+    private final static Pattern METHOD_RETURN_PATTERN = Pattern.compile(METHOD_RETURN_FORMAT);
+
+    /* A regex for the separator of parameters given to a method*/
+    private static final String CALL_METHOD_SEPARATOR = "\\s*,\\s*";
+
+    /* A regex for the separator of parameters given to a method*/
+    private static final String CONDITION_SEPARATOR = "\\s*\\|{2}|&&\\s*";
 
 
     /**

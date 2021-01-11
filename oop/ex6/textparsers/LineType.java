@@ -65,6 +65,12 @@ enum LineType {
 //    RETURN(Pattern.compile("^\\s*return\\s*;\\s*$"));
 
 
+    /* The number of brackets the count starts from is 1 because the open block isn't counted */
+    private static final int BRACKET_COUNTER_STARTING_VALUE = 1;
+
+    /* The number of brackets that indicate a valid block is found */
+    private static final int NUM_OF_BRACKETS_END_OF_ITERATION = 0;
+
     /* A pattern indicative of the value available for the type. */
     private final Pattern pattern;
 
@@ -103,9 +109,9 @@ enum LineType {
      * @param block the parent block this line belongs to
      * @param strings the LineParser Iterator of this block
      * @param line string to be currently parsed
-     * @throws BlockException
-     * @throws VariableException
-     * @throws OneLinerException
+     * @throws BlockException - general exception regarding block errors
+     * @throws VariableException - general exception regarding variable errors
+     * @throws OneLinerException - general exception regarding one liner command errors
      */
     void parseLine(Block block, Iterator<String> strings,String line) throws BlockException, VariableException, OneLinerException {
     }
@@ -117,12 +123,12 @@ enum LineType {
      * @return LinkedList of oop.ex6.lines in the block
      * @throws BlockBracketsException
      */
-    static LinkedList<String> getBlockLines(Iterator<String> currIterator) throws BlockException {
+    static LinkedList<String> getBlockLines(Iterator<String> currIterator) throws BlockBracketsException {
 
         LinkedList<String> blockStrings = new LinkedList<>();
-        int bracketCounter = 1;
+        int bracketCounter = BRACKET_COUNTER_STARTING_VALUE;
         String currLine;
-        while(currIterator.hasNext() && bracketCounter > 0){
+        while(currIterator.hasNext() && bracketCounter > NUM_OF_BRACKETS_END_OF_ITERATION){
             currLine = currIterator.next();
             blockStrings.add(currLine);
             if(openBlock.matcher(currLine).matches()){
@@ -132,7 +138,7 @@ enum LineType {
                 bracketCounter--;
             }
         }
-        if(bracketCounter>0){
+        if(bracketCounter> NUM_OF_BRACKETS_END_OF_ITERATION){
             throw new BlockBracketsException();
         }
         return blockStrings;
