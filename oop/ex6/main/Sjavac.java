@@ -70,7 +70,7 @@ public abstract class Sjavac {
             data.add(scanner.nextLine());
         }
         int counter = 0;
-
+        LinkedList<String> failed = new LinkedList<>();
         File[] sorted = file.listFiles();
         Arrays.sort(sorted);
         Pattern p1 = Pattern.compile("^test(\\d+)\\.sjava$");
@@ -104,6 +104,7 @@ public abstract class Sjavac {
 //            }
             if (m2.matches()) {
                 System.out.println(test.getName());
+
                 int result = runOnOneFile(test);
 
 //                System.out.println(" test file line catched: "+m1.group(1)+" file name: filenameNum");
@@ -114,8 +115,10 @@ public abstract class Sjavac {
                     System.out.println("Their excuse: "+m2.group(2));
 
                 } else {
-                    System.out.println("fail. expected: "+m2.group(1)+" , actual: " +result);
+                    String message = "fail. expected: "+m2.group(1)+" , actual: " +result;
+                    System.out.println(message);
                     System.out.println(m2.group(2));
+                    failed.add(test.getName() + "\n"+ message + "\n" + m2.group(2));
 
                 }
                 System.out.println();
@@ -123,6 +126,13 @@ public abstract class Sjavac {
                 counter = 0;
             }
 
+        }
+
+        for (int i=0; i<10; i++) System.out.println("_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n");
+
+
+        for (String str : failed) {
+            System.out.println(str+"\n");
         }
     }
     public static int runOnOneFile(File test){

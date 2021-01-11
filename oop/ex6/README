@@ -47,6 +47,7 @@ MethodAlreadyExistsException.java - thrown when creating two methods with the sa
 MethodCreationException.java - abstract and represents all method calls exceptions.
 MethodDoesntEndInReturnException.java - thrown when creating a method without return statement at the end.
 MethodNotInMainBlockException.java - thrown when declaring a method in lower scope than allowed (not global).
+BadMethodNameException.java - thrown when creating a method with a bad name.
 
 package oop.ex6.variables:
 Variable.java - represents a SJava variable, with type, name and initialization, final and global fields.

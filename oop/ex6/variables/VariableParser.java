@@ -15,22 +15,22 @@ import java.util.regex.Pattern;
 public abstract class VariableParser {
 
     private static final String FINAL = "final";
-    private static final String VALUE_FORMAT = ".(?:.|\\s)*";
+    private static final String VALUE_FORMAT = "\\s*((?:[\"'].*[\"'])|\\S+)\\s*";
 
     private static final String SINGLE_VARIABLE_REGEX =
-            String.format("(%s)\\s*(?:=\\s*(%s))?",Variable.getRegex(), VALUE_FORMAT);
+            String.format("(%s)\\s*(?:=%s)?",Variable.getRegex(), VALUE_FORMAT);
     private static final String FORMAT =
-            String.format("^(%s\\s+)?(%s)\\s+((?:%s,\\s*)*(?:%s))\\s*;\\s*$",
+            String.format("^\\s*(%s\\s+)?(%s)\\s+((?:%s,\\s*)*(?:%s))\\s*;\\s*$",
                     FINAL, VariableType.getRegex(), SINGLE_VARIABLE_REGEX, SINGLE_VARIABLE_REGEX);
     private static final String SET_VARIABLE_REGEX =
-            String.format("^\\s*(%s)\\s*=\\s*(%s)\\s*;$",  Variable.getRegex(), VALUE_FORMAT);
+            String.format("^\\s*(%s)\\s*=%s;\\s*$",  Variable.getRegex(), VALUE_FORMAT);
 
     private static final Pattern SINGLE_VARIABLE_PATTERN = Pattern.compile(SINGLE_VARIABLE_REGEX);
     private static final Pattern FULL_PATTERN = Pattern.compile(FORMAT);
     private static final Pattern SET_VARIABLE_PATTERN = Pattern.compile(SET_VARIABLE_REGEX);
 
     private static final String METHOD_PARAMETERS_REGEX =
-            String.format("^(%s)\\s+(%s)$", VariableType.getRegex(), Variable.getRegex());
+            String.format("^\\s*(%s)\\s+(%s)\\s*$", VariableType.getRegex(), Variable.getRegex());
     private static final Pattern METHOD_PARAMETERS_PATTERN = Pattern.compile(METHOD_PARAMETERS_REGEX);
 
     private static final String SEPARATOR = "\\s*,\\s*";
@@ -169,12 +169,12 @@ public abstract class VariableParser {
      */
     public static void createMethodParameters(MethodBlock methodBlock, String line)
             throws IllegalMethodParametersException, TypeNotFoundException, ParameterNameAlreadyExistsException {
-
+        if (line.isEmpty()) return;
         for (String str : line.split(SEPARATOR)) {
             Matcher matcher = METHOD_PARAMETERS_PATTERN.matcher(str);
             if (!matcher.find()) throw new IllegalMethodParametersException();
-            String variableName = matcher.group(1);
-            VariableType variableType = VariableType.getType(matcher.group(2));
+            VariableType variableType = VariableType.getType(matcher.group(1));
+            String variableName = matcher.group(2);
 
             Variable variable = new Variable(variableName, variableType);
             variable.initialize();

@@ -20,8 +20,14 @@ import java.util.regex.Pattern;
  */
 abstract class OneLineValidator {
 
+    /* A regex string representing a simple method name. */
+    private final static String METHOD_NAME = "[a-zA-Z]\\w*";
+
+    /* A pattern for a method name. */
+    private final static Pattern METHOD_NAME_PATTERN = Pattern.compile(METHOD_NAME);
+
     /* A regex string representing a simple method call*/
-    private final static String METHOD_CALL_FORMAT = "^(\\w+)\\((.*)\\)\\s*;\\s*$";
+    private final static String METHOD_CALL_FORMAT ="^\\s*(\\w+)\\s*\\(\\s*((?:.*\\S)|.*)?\\s*\\)\\s*;\\s*$";
 
     /* A pattern for a method call */
     private final static Pattern METHOD_CALL_PATTERN = Pattern.compile(METHOD_CALL_FORMAT);
@@ -36,7 +42,7 @@ abstract class OneLineValidator {
     private static final String CALL_METHOD_SEPARATOR = "\\s*,\\s*";
 
     /* A regex for the separator of parameters given to a method*/
-    private static final String CONDITION_SEPARATOR = "\\s*\\|{2}|&&\\s*";
+    private static final String CONDITION_SEPARATOR = "\\s*(?:\\|{2}|&{2})\\s*";
 
     /* An int used for accessing the second line from the end of a block */
     public static final int SECOND_LINE_FROM_THE_END_OF_BLOCK = 2;
@@ -51,7 +57,8 @@ abstract class OneLineValidator {
      * @throws MethodCallException - problem with calling a method.
      * @throws VariableException - problem with initializing or assigning variables.
      */
-    public static void validateOneLiner(Block scope, String line) throws MethodCallException, VariableException, ReturnOutsideMethodBlockException {
+    public static void validateOneLiner(Block scope, String line)
+            throws MethodCallException, VariableException, ReturnOutsideMethodBlockException {
         Matcher methodCallMatcher = METHOD_CALL_PATTERN.matcher(line);
         Matcher methodReturnMatcher = METHOD_RETURN_PATTERN.matcher(line);
 
@@ -76,9 +83,14 @@ abstract class OneLineValidator {
      * @throws TooManyArgumentsException - if there are too many arguments.
      */
     private static void checkCallMethod(Block scope, MethodBlock method, String argumentStr)
-            throws MethodCallParametersNotCompatibleException, TooLittleArgumentsException, TooManyArgumentsException {
+            throws MethodCallParametersNotCompatibleException, TooLittleArgumentsException,
+            TooManyArgumentsException {
         LinkedList<Variable> parameters = method.getParameters();
         String[] arguments =  argumentStr.split(CALL_METHOD_SEPARATOR);
+        if (parameters == null) {
+            if (arguments[0].isEmpty()) return;
+            else throw new TooManyArgumentsException();
+        }
         int i = 0;
         try {
             for (Variable parameter : parameters) {
@@ -97,17 +109,22 @@ abstract class OneLineValidator {
      * @param block - the scope to look at and update.
      * @throws MethodCreationException - problem with calling a method.
      */
-    public static void validateMethodDeclaration(Block block, LinkedList<String> blockLines, String methodName) throws MethodCreationException {
-        if (!block.isGlobal()){throw new MethodNotInMainBlockException();}
-        if (block.getMethod(methodName) != null) {throw new MethodAlreadyExistsException();}
-        if (!blockLines.get(blockLines.size()- SECOND_LINE_FROM_THE_END_OF_BLOCK).equals("return;")){throw new MethodDoesntEndInReturnException();}
+    public static void validateMethodDeclaration(Block block,
+                                                 LinkedList<String> blockLines, String methodName)
+            throws MethodCreationException {
+        if (!block.isGlobal()) throw new MethodNotInMainBlockException();
+        if (!METHOD_NAME_PATTERN.matcher(methodName).matches()) throw new BadMethodNameException();
+        if (block.getMethod(methodName) != null) throw new MethodAlreadyExistsException();
+        String lastLine = blockLines.get(blockLines.size()- SECOND_LINE_FROM_THE_END_OF_BLOCK);
+        if (!METHOD_RETURN_PATTERN.matcher(lastLine).matches()) throw new MethodDoesntEndInReturnException();
     }
 
     /**
      * This method validates the condition of the ConditionalBlock.
      * @throws ConditionParameterNotBooleanException - if parameters are not boolean.
      */
-    public static void validateCondition(Block scope, String condition) throws ConditionParameterNotBooleanException {
+    public static void validateCondition(Block scope, String condition)
+            throws ConditionParameterNotBooleanException {
         try {
             Variable checkBoolean = new Variable("checkBoolean", VariableType.BOOLEAN);
             for (String str : condition.split(CONDITION_SEPARATOR)) {

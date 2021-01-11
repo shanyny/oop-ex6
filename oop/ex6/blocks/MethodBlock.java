@@ -13,7 +13,7 @@ import java.util.LinkedList;
 public class MethodBlock extends Block {
 
     /* the method's parameters that are automatically initialized on creation. */
-    private final LinkedList<Variable> parameters = new LinkedList<>();
+    private LinkedList<Variable> parameters;
 
     /* the method's name. */
     private final String name;
@@ -42,6 +42,7 @@ public class MethodBlock extends Block {
      * This method adds a parameter to the parameters linked list.
      */
     public void addParameter(Variable parameter) throws ParameterNameAlreadyExistsException {
+        if (parameters == null) parameters = new LinkedList<>();
         if (getVariable(parameter.getName(), true) != null) {
             throw new ParameterNameAlreadyExistsException();
         }

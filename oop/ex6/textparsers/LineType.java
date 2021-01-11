@@ -15,25 +15,26 @@ import java.util.regex.Pattern;
  * This enum represents the different types of lines available.
  * @author Shany Gindi and Roy Urbach
  */
-
 enum LineType {
 
-    COMMENT(Pattern.compile("^/{2}[.\\s]*")),
+    COMMENT(Pattern.compile("^/{2}.*$")),
     EMPTY(Pattern.compile("^\\s*$")),
 
-    CONDITION(Pattern.compile("^(?:if|while)\\((.*)\\)\\s*\\{\\s*$")){
+    CONDITION(Pattern.compile("^\\s*(?:if|while)\\s*\\(\\s*(.*\\S)\\s*\\)\\s*\\{\\s*$")){
         /** This method is validating a condition using OneLineValidator and creates a ConditionalBlock Object. */
         @Override
         void parseLine(Block block, Iterator<String> strings,String line)
                 throws BlockException, VariableException, OneLinerException {
             if (block.isGlobal()){throw new ConditionInMainBlockException();}
-            String condition = getMatcher(line).group(1);
+            Matcher matcher = getMatcher(line);
+            matcher.matches();
+            String condition = matcher.group(1);
             LinkedList<String> blockLines = getBlockLines(strings);
             OneLineValidator.validateCondition(block, condition);
             new ConditionalBlock(block, blockLines);
         }
     },
-    METHOD(Pattern.compile("^void\\s(.*)\\((.*)\\)\\s*\\{\\s*$")){
+    METHOD(Pattern.compile("^\\s*void\\s*(\\S+)\\s*\\((.*)\\)\\s*\\{\\s*$")){
         /** This method is validating a block using OneLineValidator and creates a MethodBlock Object. */
         @Override
         void parseLine(Block block, Iterator<String> strings,String line)
@@ -51,7 +52,7 @@ enum LineType {
             VariableParser.createMethodParameters(methodBlock, methodParameters);  // add parameters to method
         }
     },
-    ONELINER(Pattern.compile("^[^/].*\\s*;\\s*$")){
+    ONELINER(Pattern.compile("^(?!(?:/|\\s*return)).*\\s*;\\s*$")){
         /** This method is validating a line of code using OneLineValidator.*/
         @Override
         void parseLine(Block block, Iterator<String> strings,String line)
@@ -85,7 +86,7 @@ enum LineType {
     private final Pattern pattern;
 
     /* A pattern used for getBlockLines to identify a general block opening line.*/
-    private static final Pattern openBlock = Pattern.compile("^[.\\s]*\\s*\\{\\s*$");
+    private static final Pattern OPEN_BLOCK = Pattern.compile("^.*\\s*\\{\\s*$");
 
 
     /**
@@ -142,16 +143,12 @@ enum LineType {
         while(currIterator.hasNext() && bracketCounter > NUM_OF_BRACKETS_END_OF_ITERATION){
             currLine = currIterator.next();
             blockStrings.add(currLine);
-            if(openBlock.matcher(currLine).matches()){
-                bracketCounter++;
-            }
-            else if(CLOSEBLOCK.isMatching(currLine)){
-                bracketCounter--;
-            }
+
+            if (OPEN_BLOCK.matcher(currLine).matches()) bracketCounter++;
+            else if (CLOSEBLOCK.isMatching(currLine)) bracketCounter--;
         }
-        if(bracketCounter> NUM_OF_BRACKETS_END_OF_ITERATION){
-            throw new BlockBracketsException();
-        }
+        if(bracketCounter > NUM_OF_BRACKETS_END_OF_ITERATION) throw new BlockBracketsException();
+
         return blockStrings;
     }
 

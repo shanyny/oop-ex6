@@ -52,6 +52,10 @@ public abstract class Block {
         }
     }
 
+    /**
+     * This method returns true if the block is global, and false otherwise.
+     * @return true if the block is global, and false otherwise.
+     */
     public boolean isGlobal(){
         return false;
     }
@@ -88,9 +92,9 @@ public abstract class Block {
         if (methods != null) {
             MethodBlock method = methods.get(methodName);
             if (method != null) return method;
-            else if (!isGlobal()) return parent.getMethod(methodName);
         }
-        return null;
+        if (!isGlobal()) return parent.getMethod(methodName);
+        else return null;
     }
 
     /**
