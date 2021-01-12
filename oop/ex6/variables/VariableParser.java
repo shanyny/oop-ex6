@@ -15,15 +15,16 @@ import java.util.regex.Pattern;
 public abstract class VariableParser {
 
     private static final String FINAL = "final";
-    private static final String VALUE_FORMAT = "\\s*((?:[\"'].*[\"'])|\\S+)\\s*";
+    private static final String VALUE_FORMAT = "\\s*((?:[\"'].*[\"'])|[^,;\\s]*)\\s*";
 
     private static final String SINGLE_VARIABLE_REGEX =
-            String.format("(%s)\\s*(?:=%s)?",Variable.getRegex(), VALUE_FORMAT);
+            String.format("\\s*(%s)\\s*(?:=%s)?\\s*",Variable.getRegex(), VALUE_FORMAT);
     private static final String FORMAT =
             String.format("^\\s*(%s\\s+)?(%s)\\s+((?:%s,\\s*)*(?:%s))\\s*;\\s*$",
                     FINAL, VariableType.getRegex(), SINGLE_VARIABLE_REGEX, SINGLE_VARIABLE_REGEX);
     private static final String SET_VARIABLE_REGEX =
-            String.format("^\\s*(%s)\\s*=%s;\\s*$",  Variable.getRegex(), VALUE_FORMAT);
+            String.format("^\\s*(?:%s,)*\\s*(?:%s)\\s*;", SINGLE_VARIABLE_REGEX, SINGLE_VARIABLE_REGEX);
+//            String.format("^\\s*(%s)\\s*=%s;\\s*$",  Variable.getRegex(), VALUE_FORMAT);
 
     private static final Pattern SINGLE_VARIABLE_PATTERN = Pattern.compile(SINGLE_VARIABLE_REGEX);
     private static final Pattern FULL_PATTERN = Pattern.compile(FORMAT);
@@ -61,7 +62,7 @@ public abstract class VariableParser {
         if (initializingMatcher.find()) initializeVariablesParser(block, initializingMatcher);
 
         // if assigning line
-        else if (setVariableMatcher.find()) assignVariable(block, setVariableMatcher);
+        else if (setVariableMatcher.matches()) assignVariable(block, line);
 
         // else error
         else throw new InvalidVariableLineException();
@@ -102,32 +103,37 @@ public abstract class VariableParser {
     /**
      * This method assigns a new value to a variable.
      * @param block - the block to add the variables to.
-     * @param matcher - the matcher that holds the variable's strings.
+     * @param line - the line to parse.
      * @throws NewValueNotCompatibleException - if the value given to a variable is not compatible with its type.
      * @throws VariableIsFinalException - if trying to assign a value to a final variable.
      * @throws VariableNotInitializedException - if trying to assign a not-initialized variable to a variable.
      * @throws FinalVariableNotInitializedException - if trying to declare a final variable without initializing it.
      * @throws VariableDoesntExistException - if trying to assign a variable that doesn't exist to a variable.
      */
-    private static void assignVariable(Block block, Matcher matcher)
+    private static void assignVariable(Block block, String line)
             throws VariableDoesntExistException, VariableIsFinalException, NewValueNotCompatibleException, VariableNotInitializedException,
             FinalVariableNotInitializedException {
-        String varName = matcher.group(1);
 
-        Variable var = block.getVariable(varName, false);
-        if (var == null) throw new VariableDoesntExistException();  // if the variable isn't in any parent scope
+        Matcher matcher = SINGLE_VARIABLE_PATTERN.matcher(line);
+        while (matcher.find()) {
+            String varName = matcher.group(1);
 
-        String valueStr = matcher.group(2);
+            Variable var = block.getVariable(varName, false);
+            if (var == null)
+                throw new VariableDoesntExistException();  // if the variable isn't in any parent scope
 
-        // if the variable is global and the scope isn't, create local global variable
-        if (var.isGlobal() && !block.isGlobal()) {
-            createVariable(block, var.getName(), var.getType(), valueStr, false, true);
+            String valueStr = matcher.group(2);
+
+            // if the variable is global and the scope isn't, create local global variable
+            if (var.isGlobal() && !block.isGlobal()) {
+                createVariable(block, var.getName(), var.getType(), valueStr, false, true);
+            }
+
+            // set the value
+            Variable valueVar = block.getVariable(valueStr, false);
+            if (valueVar != null) var.setValue(valueVar);
+            else var.setValue(valueStr);
         }
-
-        // set the value
-        Variable valueVar = block.getVariable(valueStr, false);
-        if (valueVar != null) var.setValue(valueVar);
-        else var.setValue(valueStr);
     }
 
     /**
