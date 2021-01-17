@@ -3,7 +3,6 @@ package oop.ex6.textparsers;
 import oop.ex6.blocks.Block;
 import oop.ex6.blocks.exceptions.ConditionParameterNotBooleanException;
 import oop.ex6.blocks.MethodBlock;
-import oop.ex6.textparsers.exceptions.*;
 import oop.ex6.textparsers.exceptions.methodcall.*;
 import oop.ex6.textparsers.exceptions.methodcreation.*;
 import oop.ex6.variables.*;
@@ -46,6 +45,9 @@ abstract class OneLineValidator {
 
     /* An int used for accessing the second line from the end of a block */
     public static final int SECOND_LINE_FROM_THE_END_OF_BLOCK = 2;
+
+    /* A boolean variable to check Conditionals with. */
+    private static final Variable BOOLEAN = new Variable("checkBoolean", VariableType.BOOLEAN);
 
 
     /**
@@ -123,11 +125,10 @@ abstract class OneLineValidator {
     public static void validateCondition(Block scope, String condition)
             throws ConditionParameterNotBooleanException {
         try {
-            Variable checkBoolean = new Variable("checkBoolean", VariableType.BOOLEAN);
             for (String str : condition.split(CONDITION_SEPARATOR)) {
                 Variable variable = scope.getVariable(str, false);
-                if (variable == null) checkBoolean.setValue(str);
-                else checkBoolean.setValue(variable);
+                if (variable == null) BOOLEAN.setValue(str);
+                else BOOLEAN.setValue(variable);
             }
         } catch (VariableException e) {throw new ConditionParameterNotBooleanException();}
     }
