@@ -32,19 +32,18 @@ public abstract class Sjavac {
         Iterable<String> sJavaScript;
         try {
             sJavaScript = FileReader.getString(file);
-        } catch (IOException e) {
+            new MainBlock(sJavaScript);  // actual check
+            System.out.println(CODE_IS_LEGAL);  // if no exception was thrown
+
+        } catch (IOException ioException) {
             System.out.println(IO_PROBLEM);
             System.err.println(IO_PROBLEM_MESSAGE);
-            return;
-        }
 
-        try { new MainBlock(sJavaScript);
         } catch (IllegalSJavaCodeException e) {
             System.out.println(CODE_IS_ILLEGAL);
             System.err.println(e.getMessage());
-            return;
+
         }
 
-        System.out.println(CODE_IS_LEGAL);
     }
 }
